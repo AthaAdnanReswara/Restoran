@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
             $table->text('notes')->nullable();
+            $table->text('receipt')->nullable();
             $table->timestamps();
         });
     }
