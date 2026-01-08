@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'cancelled']);
             $table->text('notes')->nullable();
             $table->timestamps();
         });
