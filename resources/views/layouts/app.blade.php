@@ -10,6 +10,8 @@
 </head>
 
 <body>
+
+
     @yield('content')
 
     @include('layouts.navbar')

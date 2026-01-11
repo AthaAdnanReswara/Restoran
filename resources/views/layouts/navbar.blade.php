@@ -4,7 +4,8 @@
         <div class="logo font-bold text-2xl">Restoran</div>
         <div class="menu flex gap-8">
             <a href="#" class="nav-link py-2 px-4 transition" data-menu="home">Home</a>
-            <a href="#" class="nav-link py-2 px-4 transition" data-menu="menu">Menu</a>
+            <a href="{{ route('admin.pegawai.index') }}" class="nav-link py-2 px-4 transition" data-menu="home">Pegawai</a>
+            <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition" data-menu="menu">Menu</a>
             <a href="#" class="nav-link py-2 px-4 transition" data-menu="order">Order</a>
             <a href="#" class="nav-link py-2 px-4 transition" data-menu="profile">Profile</a>
         </div>
@@ -16,6 +17,16 @@
     style="box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);">
     <div class="grid grid-cols-5 gap-0 px-2 py-3">
         <!-- Home -->
+        @if(auth()->user()->role == 'admin')
+        <!-- Menu -->
+        <a href="{{ route('admin.menu.index') }}"
+            class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
+            data-menu="menu" title="Menu">
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+        </a>
+        @endif
         <a href="#"
             class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
             data-menu="home" title="Home">
@@ -23,7 +34,6 @@
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
             </svg>
         </a>
-
         <!-- Menu -->
         <a href="#"
             class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"

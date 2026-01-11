@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\PegawaiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +11,7 @@ Route::get('/login', function () {
 });
 
 Route::get('/', function () {
-    return view('pelangan.index');
+    return view('pelanggan.index');
 });
 
 //Routes Login dan Logout
@@ -22,6 +24,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 //Prefix Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function (){
     //Dashboard Admin
-    Route::get('dashboard', [DashboardController::class, 'login'])->name('dashboard');
-
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    //Menu Resource
+    Route::resource('menu', MenuController::class);
+    //Pegawai Resource
+    Route::resource('pegawai', PegawaiController::class);
 });
