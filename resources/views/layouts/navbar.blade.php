@@ -28,13 +28,13 @@
             @endauth
             {{-- ================= PELANGGAN / GUEST ================= --}}
             @guest
-            <a href="{{ route('home') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+            <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
                 Home
             </a>
-            <a href="{{ route('menu.public') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+            <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
                 Menu
             </a>
-            <a href="{{ route('order') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+            <a href="/order" class="nav-link py-2 px-4 transition hover:bg-gray-100">
                 Order
             </a>
             @endguest

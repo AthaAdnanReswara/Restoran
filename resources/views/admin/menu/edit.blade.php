@@ -75,7 +75,7 @@
                         <img src="{{ asset('storage/' . $menu->image) }}"
                              alt="{{ $menu->name }}"
                              class="rounded mb-2"
-                             style="width: 120px; height: 120px; object-fit: cover;">
+                             style="width: 20px; height: 20px; object-fit: cover;">
                     @else
                         <span class="text-muted fst-italic">Belum ada foto</span>
                     @endif
