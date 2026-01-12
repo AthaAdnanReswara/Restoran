@@ -8,16 +8,6 @@
         <h1 class="text-2xl font-bold text-gray-800">
             Dashboard Restoran
         </h1>
-
-        <!-- Logout -->
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit"
-                class="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
-                <i class="bx bx-power-off"></i>
-                <span>Logout</span>
-            </button>
-        </form>
     </div>
 
     <!-- Statistik -->

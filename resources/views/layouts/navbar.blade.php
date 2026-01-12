@@ -5,41 +5,38 @@
         <div class="menu flex gap-8 items-center">
             {{-- ================= ADMIN ================= --}}
             @auth
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Home
-                    </a>
-                    <a href="{{ route('admin.pegawai.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Pegawai
-                    </a>
-                    <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Menu
-                    </a>
-                    <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Order
-                    </a>
-                    <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Profile
-                    </a>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit"class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
-                            Logout
-                        </button>
-                    </form>
-                @endif
+            @if(auth()->user()->role === 'admin')
+            <a href="{{ route('admin.dashboard') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                Home
+            </a>
+            <a href="{{ route('admin.pegawai.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                Pegawai
+            </a>
+            <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                Menu
+            </a>
+            <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                Order
+            </a>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
+                    Logout
+                </button>
+            </form>
+            @endif
             @endauth
             {{-- ================= PELANGGAN / GUEST ================= --}}
             @guest
-                <a href="{{ route('home') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                    Home
-                </a>
-                <a href="{{ route('menu.public') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                    Menu
-                </a>
-                <a href="{{ route('order') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                    Order
-                </a>
+            <a href="{{ route('home') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                Home
+            </a>
+            <a href="{{ route('menu.public') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                Menu
+            </a>
+            <a href="{{ route('order') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                Order
+            </a>
             @endguest
         </div>
     </div>
@@ -70,8 +67,18 @@
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
             </svg>
         </a>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit"class="nav-link-mobile flex items-center justify-center py-3 rounded-lg transition"title="Logout">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 17l1.41-1.41L8.83 13H20v-2H8.83l2.58-2.59L10 7l-5 5 5 5z" />
+                </svg>
+            </button>
+        </form>
         @endif
         @endauth
+        <!-- PELANGGAN / GUEST -->
+        @guest
         <a href="#"
             class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
             data-menu="home" title="Home">
@@ -106,6 +113,6 @@
                     d="M240-80q-50 0-85-35t-35-85v-120h120v-560h600v680q0 50-35 85t-85 35H240Zm480-80q17 0 28.5-11.5T760-200v-600H320v480h360v120q0 17 11.5 28.5T720-160ZM360-600v-80h360v80H360Zm0 120v-80h360v80H360ZM240-160h360v-80H200v40q0 17 11.5 28.5T240-160Zm0 0h-40 400-360Z" />
             </svg>
         </a>
-
+        @endguest
     </div>
 </nav>
