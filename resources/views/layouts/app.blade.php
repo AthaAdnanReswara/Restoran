@@ -10,11 +10,10 @@
 </head>
 
 <body>
-
+    @include('layouts.navbar')
+    @include('layouts.header')
 
     @yield('content')
-
-    @include('layouts.navbar')
 
     @vite('resources/js/app.js')
 </body>

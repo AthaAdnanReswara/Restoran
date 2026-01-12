@@ -30,3 +30,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     //Pegawai Resource
     Route::resource('pegawai', PegawaiController::class);
 });
+
+Route::get('/order', function () {
+    return view('pelanggan.order');
+});
+
+Route::get('/transaction', function () {
+    return view('pelanggan.transaction');
+});

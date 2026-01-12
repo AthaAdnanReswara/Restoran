@@ -2,15 +2,36 @@
 export function initNavbar() {
     const navLinks = document.querySelectorAll(".nav-link-mobile");
 
-    // Set home sebagai active default
-    const homeLink = document.querySelector('[data-menu="home"]');
-    if (homeLink) {
-        homeLink.style.color = "#eab308"; // yellow-500
+    // Function to set active state based on current path
+    function setActiveByPath() {
+        const currentPath = window.location.pathname;
+        let activeSet = false;
+
+        navLinks.forEach((link) => {
+            const href = link.getAttribute("href");
+            // Check if current path matches the link's href
+            if (currentPath === href || (href === "/" && currentPath === "/")) {
+                link.style.color = "#eab308"; // yellow-500
+                activeSet = true;
+            } else {
+                link.style.color = "#9ca3af"; // gray-400
+            }
+        });
+
+        // If no match found, set home as default
+        if (!activeSet) {
+            const homeLink = document.querySelector('[data-menu="home"]');
+            if (homeLink) {
+                homeLink.style.color = "#eab308"; // yellow-500
+            }
+        }
     }
+
+    // Set active on initial page load
+    setActiveByPath();
 
     navLinks.forEach((link) => {
         link.addEventListener("click", function (e) {
-            e.preventDefault();
             const menu = this.getAttribute("data-menu");
 
             // Remove active state dari semua links
