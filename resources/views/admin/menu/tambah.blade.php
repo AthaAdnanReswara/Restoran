@@ -23,7 +23,9 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.menu.store') }}" method="POST">
+            <form action="{{ route('admin.menu.store') }}" 
+                  method="POST" 
+                  enctype="multipart/form-data">
                 @csrf
 
                 {{-- Nama Menu --}}
@@ -60,6 +62,26 @@
                     </select>
                 </div>
 
+                {{-- FOTO MENU --}}
+                <div class="mb-3">
+                    <label class="form-label">Foto Menu</label>
+                    <input type="file"
+                           name="image"
+                           class="form-control"
+                           accept="image/*">
+                    <small class="text-muted">
+                        Format: JPG, PNG | Maksimal 2MB
+                    </small>
+                </div>
+
+                {{-- PREVIEW GAMBAR --}}
+                <div class="mb-3">
+                    <img id="preview-image"
+                         src="#"
+                         class="rounded d-none"
+                         style="max-width: 20px;">
+                </div>
+
                 {{-- Tombol --}}
                 <div class="d-flex justify-content-between">
                     <a href="{{ route('admin.menu.index') }}" class="btn btn-secondary">
@@ -77,4 +99,17 @@
     </div>
 
 </div>
+
+{{-- SCRIPT PREVIEW GAMBAR --}}
+<script>
+document.querySelector('input[name="image"]').addEventListener('change', function(e) {
+    const preview = document.getElementById('preview-image');
+    const file = e.target.files[0];
+
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove('d-none');
+    }
+});
+</script>
 @endsection

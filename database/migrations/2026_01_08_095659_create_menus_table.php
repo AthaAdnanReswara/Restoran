@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('price', 10, 2);
             $table->enum('category', ['food', 'drink', 'snack']);
+            $table->string('image')->nullable(); 
             $table->timestamps();
         });
     }

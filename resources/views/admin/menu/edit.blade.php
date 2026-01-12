@@ -23,7 +23,10 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.menu.update', $menu->id) }}" method="POST">
+            {{-- FORM --}}
+            <form action="{{ route('admin.menu.update', $menu->id) }}"
+                  method="POST"
+                  enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -62,6 +65,29 @@
                             Snack
                         </option>
                     </select>
+                </div>
+
+                {{-- FOTO MENU (DITAMBAHKAN) --}}
+                <div class="mb-3">
+                    <label class="form-label">Foto Menu</label><br>
+
+                    @if ($menu->image)
+                        <img src="{{ asset('storage/' . $menu->image) }}"
+                             alt="{{ $menu->name }}"
+                             class="rounded mb-2"
+                             style="width: 120px; height: 120px; object-fit: cover;">
+                    @else
+                        <span class="text-muted fst-italic">Belum ada foto</span>
+                    @endif
+
+                    <input type="file"
+                           name="image"
+                           class="form-control mt-2"
+                           accept="image/*">
+
+                    <small class="text-muted">
+                        Kosongkan jika tidak ingin mengganti foto
+                    </small>
                 </div>
 
                 {{-- Tombol --}}
