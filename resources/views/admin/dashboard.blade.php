@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-gray-100 min-h-screen p-6">
+<section class="bg-gray-100 min-h-screen p-6 mt-12 mb-30">
 
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
@@ -79,5 +79,5 @@
         </div>
     </div>
 
-</div>
+</section>
 @endsection
