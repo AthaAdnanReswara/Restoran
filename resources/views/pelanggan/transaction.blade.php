@@ -50,6 +50,21 @@
                 </li>
             </ul>
 
+            {{-- Subtotal --}}
+            <div class="border-t mt-4 pt-4 flex flex-col justify-start items-start">
+                <div>
+                    <span class="">Subtotal:</span>
+                    <span class="">$15.00</span>
+                </div>
+
+                <div>
+                    <span class="">Discount:</span>
+                    <span class="">$15.00</span>
+                </div>
+
+
+            </div>
+
             <!-- Total -->
             <div class="border-t mt-4 pt-4 flex justify-between items-center">
                 <span class="font-bold">Total:</span>

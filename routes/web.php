@@ -4,25 +4,18 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PegawaiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Pelanggan\PelangganController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/login', function () {
-    return view('auth.login');
-});
-
-Route::get('/', function () {
-    return view('pelanggan.index');
-});
-
 //Routes Login dan Logout
-Route::middleware('guest')->group(function (){
+Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 //Prefix Admin
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function (){
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     //Dashboard Admin
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     //Menu Resource
@@ -31,10 +24,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::resource('pegawai', PegawaiController::class);
 });
 
-Route::get('/order', function () {
-    return view('pelanggan.order');
+// Prefix Pegawai
+Route::prefix('pegawai')->name('pegawai.')->middleware(['auth', 'role:pegawai'])->group(function () {
+    //Dashboard Pegawai
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-Route::get('/transaction', function () {
-    return view('pelanggan.transaction');
-});
+// Route Pelanggan/Guest
+Route::prefix('/')
+    ->name('pelanggan.')
+    ->group(function () {
+
+        Route::get('/', [PelangganController::class, 'index'])
+            ->name('home');
+
+        Route::get('/order', [PelangganController::class, 'order'])
+            ->name('order');
+
+        Route::get('/transaction', [PelangganController::class, 'transaction'])
+            ->name('transaction');
+    });

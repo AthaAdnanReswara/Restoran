@@ -14,7 +14,7 @@ class DashboardController extends Controller
         if ($user->role === 'admin') {
             return view('admin.dashboard', compact('user'));
         }elseif($user->role === 'pegawai'){
-            return view('pegawai.dashboard', compact('user'));
+            return view('pegawai.index', compact('user'));
         }else{
             abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk membuka halaman ini .');
         }
