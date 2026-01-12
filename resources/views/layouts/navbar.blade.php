@@ -7,6 +7,12 @@
             <a href="{{ route('admin.pegawai.index') }}" class="nav-link py-2 px-4 transition" data-menu="home">Pegawai</a>
             <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition" data-menu="menu">Menu</a>
             <a href="#" class="nav-link py-2 px-4 transition" data-menu="order">Order</a>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit"class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
+                    Logout
+                </button>
+            </form>
             <a href="#" class="nav-link py-2 px-4 transition" data-menu="profile">Profile</a>
         </div>
     </div>
@@ -26,7 +32,7 @@
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
             </svg>
         </a>
-        @endif
+        @else
         <a href="#"
             class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
             data-menu="home" title="Home">
@@ -72,6 +78,7 @@
                     d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
             </svg>
         </a>
+        @endif
     </div>
 </nav>
 
@@ -90,7 +97,7 @@
         }
 
         navLinks.forEach((link) => {
-            link.addEventListener("click", function (e) {
+            link.addEventListener("click", function(e) {
                 e.preventDefault();
 
                 // Remove active state dari semua links
