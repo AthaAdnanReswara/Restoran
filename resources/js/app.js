@@ -1,3 +1,8 @@
 import "./bootstrap";
-import { initNavbar } from "./navbar";
+import { initCart } from './cart';
+
+document.addEventListener('DOMContentLoaded', () => {
+    initCart();
+});
+// import { initNavbar } from "./navbar";
 // initNavbar();

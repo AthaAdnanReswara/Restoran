@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PegawaiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Pelanggan\OrderController;
 use App\Http\Controllers\Pelanggan\PelangganController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +35,6 @@ Route::prefix('pegawai')->name('pegawai.')->middleware(['auth', 'role:pegawai'])
 Route::prefix('/')
     ->name('pelanggan.')
     ->group(function () {
-
         Route::get('/', [PelangganController::class, 'index'])
             ->name('home');
 
@@ -43,4 +43,8 @@ Route::prefix('/')
 
         Route::get('/transaction', [PelangganController::class, 'transaction'])
             ->name('transaction');
+        Route::post('/set-customer', [OrderController::class, 'setCustomer'])
+            ->name('set.customer');
+        Route::post('/order/qty', [OrderController::class, 'updateQty'])->name('order.qty');
+        Route::post('/order/add', [OrderController::class, 'addToCart'])->name('order.add');
     });

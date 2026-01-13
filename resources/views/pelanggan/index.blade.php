@@ -3,10 +3,11 @@
 @section('content')
     <section id="header">
         <div class="info mt-2 flex justify-between shadow-lg p-8 rounded-2xl bg-white">
-            <h3>Name: Hikmal Raditya</h3>
-            <h3>No Table: 16</h3>
+            <h3>Name: {{ session('customer_name') }}</h3>
+            <h3>No Table: {{ session('table_id') }}</h3>
         </div>
     </section>
+
 
     <section id="menu" class="mt-12 mb-24">
         <div class="flex justify-between items-center text-center mb-8 mx-2">
@@ -40,301 +41,122 @@
             </div>
         </div>
 
-        <div class="wrapper-menu mx-2">
-            <div class="category-title mb-4">
-                <h3 class="text-2xl font-bold">Food</h3>
-            </div>
-            <div class="wrapper-menu grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-2">
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/burger.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Burger</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
+        @php
+            $categoryLabels = [
+                'food' => '🍽️ Food',
+                'drink' => '🥤 Drink',
+                'snack' => '🍟 Snack',
+            ];
+        @endphp
 
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
+        @forelse ($menus as $category => $items)
+            <div class="wrapper-menu mx-2 mb-10">
 
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
+                <!-- TITLE CATEGORY -->
+                <div class="category-title mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800">
+                        {{ $categoryLabels[$category] ?? ucfirst($category) }}
+                    </h3>
+                    <div class="h-1 w-16 bg-yellow-500 rounded mt-1"></div>
                 </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/burger.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Burger</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
 
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
+                <!-- MENU GRID -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/burger.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Burger</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
+                    @foreach ($items as $menu)
+                        <div class="item-menu bg-white rounded-2xl shadow hover:shadow-lg transition p-3">
 
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
+                            <img class="rounded-xl w-full h-36 object-cover" src="{{ asset('storage/' . $menu->image) }}"
+                                alt="{{ $menu->name }}">
 
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/burger.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Burger</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
+                            <div class="info-menu mt-3 flex justify-between items-center">
+                                <h3 class="font-semibold text-gray-800">
+                                    {{ $menu->name }}
+                                </h3>
+                                <span class="font-bold text-yellow-500">
+                                    Rp {{ number_format($menu->price, 0, ',', '.') }}
+                                </span>
+                            </div>
 
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
+                            <!-- QTY -->
+                            <div class="flex items-center justify-between mt-2">
+                                <button onclick="decreaseMenuQty({{ $menu->id }})"
+                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200">−</button>
 
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
+                                <span id="menu-qty-{{ $menu->id }}" class="font-semibold">0</span>
+
+                                <button onclick="increaseMenuQty({{ $menu->id }})"
+                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200">+</button>
+                            </div>
+
+                            <!-- ADD TO CART -->
+                            <button
+                                onclick="addToCart({
+                                    menu_id: {{ $menu->id }},
+                                    name: '{{ $menu->name }}',
+                                    price: {{ $menu->price }},
+                                    image: '{{ $menu->image }}'
+                                })"
+                                class="w-full bg-yellow-500 text-white py-2 rounded-xl mt-2">
+                                Add to Cart
+                            </button>
+                        </div>
+                    @endforeach
+
                 </div>
             </div>
 
-            <div class="category-title mb-4 mt-4">
-                <h3 class="text-2xl font-bold">Drink</h3>
-            </div>
-            <div class="wrapper-menu grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-2">
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/juice.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Juice</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/juice.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Juice</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/juice.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Juice</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/juice.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">Juice</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="category-title mb-4 mt-4">
-                <h3 class="text-2xl font-bold">Snack</h3>
-            </div>
-            <div class="wrapper-menu grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-2">
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/snack.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">snack</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/snack.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">snack</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/snack.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">snack</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-                <div class="item-menu rounded-2xl">
-                    <img class="rounded-2xl" src="{{ asset('images/snack.jpg') }}" alt="" srcset="">
-                    <div class="info-menu mt-2 flex justify-between items-center">
-                        <h3 class="font-semibold">snack</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu mt-2 flex justify-between items-center">
-                        <button class="">+</button>
-                        <p>0</p>
-                        <button>-</button>
-                    </div>
-
-                    <div>
-                        <button
-                            class="w-full bg-yellow-500 text-white py-2 mt-2 rounded-2xl flex items-center justify-center gap-2 hover:bg-yellow-600 transition"><svg
-                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                width="24px" fill="white">
-                                <path
-                                    d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-                            </svg> Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        @empty
+            <p class="text-gray-500 italic text-center mt-10">
+                No menu available.
+            </p>
+        @endforelse
     </section>
 @endsection
+
+@if (!session()->has('customer_name'))
+    <div class="fixed inset-0 z-999 bg-black/70 flex items-center justify-center">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl">
+
+            <h2 class="text-2xl font-bold text-center mb-6">
+                🍽️ Welcome
+            </h2>
+
+            <form method="POST" action="{{ route('pelanggan.set.customer') }}">
+                @csrf
+
+                <!-- Nama -->
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1">
+                        Your Name
+                    </label>
+                    <input type="text" name="customer_name"
+                        class="w-full border rounded-lg px-4 py-2 focus:ring focus:ring-yellow-300" required>
+                </div>
+
+                <!-- Meja -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold mb-1">
+                        Select Table
+                    </label>
+                    <select name="table_id" class="w-full border rounded-lg px-4 py-2 focus:ring focus:ring-yellow-300"
+                        required>
+                        <option value="">-- Choose Table --</option>
+                        @foreach ($tables as $table)
+                            <option value="{{ $table->id }}">
+                                Table {{ $table->table_number }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button
+                    class="w-full bg-yellow-500 text-white py-3 rounded-xl font-semibold
+                       hover:bg-yellow-600 transition">
+                    Start Order
+                </button>
+            </form>
+
+        </div>
+    </div>
+@endif

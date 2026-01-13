@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('table_id')->constrained('tables')->onDelete('cascade');
             $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
+            $table->string('customer_name', 255);
             $table->integer('quantity');
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'completed', 'cancelled']);
+            $table->enum('payment_method', ['cash', 'cashless']);
             $table->text('notes')->nullable();
             $table->text('receipt')->nullable();
             $table->timestamps();

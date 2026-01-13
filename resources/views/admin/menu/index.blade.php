@@ -3,95 +3,135 @@
 @section('title', 'Data Menu')
 
 @section('content')
-<div class="container mt-4">
+    <section class="mt-6 px-4 pb-20 max-w-7xl mx-auto">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>🍽️ Daftar Menu</h3>
-        <a href="{{ route('admin.menu.create') }}" class="btn btn-primary">
-            + Tambah Menu
-        </a>
-    </div>
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+                <h2 class="text-2xl font-bold flex items-center gap-2">
+                    🍽️ Daftar Menu
+                </h2>
+                <div class="h-1 w-24 bg-yellow-500 rounded mt-2"></div>
+            </div>
 
-    {{-- Alert sukses --}}
-    @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    @endif
+            <a href="{{ route('admin.menu.create') }}"
+                class="inline-flex items-center justify-center rounded-xl
+                  bg-yellow-500 hover:bg-yellow-600
+                  px-5 py-2 text-white font-semibold transition">
+                + Tambah Menu
+            </a>
+        </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+        <!-- Alert -->
+        @if (session('success'))
+            <div class="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+                {{ session('success') }}
+            </div>
+        @endif
 
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th>No</th>
-                        <th>Foto</th>
-                        <th>Nama Menu</th>
-                        <th>Harga</th>
-                        <th>Kategori</th>
-                        <th width="160">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($menus as $menu)
-                    <tr>
-                        <td class="text-center">{{ $loop->iteration }}</td>
+        <!-- Card -->
+        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
 
-                        {{-- FOTO MENU --}}
-                        <td class="text-center">
-                            @if ($menu->image)
-                            <img src="{{ asset('storage/' . $menu->image) }}"
-                                alt="{{ $menu->name }}"
-                                style="width: 70px; height: 70px; object-fit: cover;"
-                                class="rounded">
-                            @else
-                            <span class="text-muted fst-italic">Tidak ada</span>
-                            @endif
-                        </td>
+            <!-- Table Wrapper -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+                        <tr>
+                            <th class="px-4 py-3 text-center">No</th>
+                            <th class="px-4 py-3 text-center">Foto</th>
+                            <th class="px-4 py-3">Nama Menu</th>
+                            <th class="px-4 py-3">Harga</th>
+                            <th class="px-4 py-3 text-center">Kategori</th>
+                            <th class="px-4 py-3 text-center">Aksi</th>
+                        </tr>
+                    </thead>
 
-                        <td>{{ $menu->name }}</td>
+                    <tbody class="divide-y">
+                        @forelse ($menus as $menu)
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-4 py-3 text-center font-medium">
+                                    {{ $loop->iteration }}
+                                </td>
 
-                        <td>Rp {{ number_format($menu->price, 0, ',', '.') }}</td>
+                                <!-- Foto -->
+                                <td class="px-4 py-3 text-center">
+                                    @if ($menu->image)
+                                        <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}"
+                                            class="w-16 h-16 object-cover rounded-xl mx-auto">
+                                    @else
+                                        <span class="text-gray-400 italic text-xs">
+                                            Tidak ada
+                                        </span>
+                                    @endif
+                                </td>
 
-                        <td class="text-center">
-                            @if ($menu->category == 'food')
-                            <span class="badge bg-success">Makanan</span>
-                            @elseif ($menu->category == 'drink')
-                            <span class="badge bg-primary">Minuman</span>
-                            @else
-                            <span class="badge bg-warning text-dark">Snack</span>
-                            @endif
-                        </td>
+                                <td class="px-4 py-3 font-semibold text-gray-800">
+                                    {{ $menu->name }}
+                                </td>
 
-                        <td class="text-center">
-                            <a href="{{ route('admin.menu.edit', $menu->id) }}" class="btn btn-sm btn-warning">
-                                Edit
-                            </a>
+                                <td class="px-4 py-3">
+                                    Rp {{ number_format($menu->price, 0, ',', '.') }}
+                                </td>
 
-                            <form action="{{ route('admin.menu.destroy', $menu->id) }}" method="POST"
-                                class="d-inline"
-                                onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger">
-                                    Hapus
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center text-muted">
-                            Data menu belum tersedia
-                        </td>
-                    </tr>
-                    @endforelse
+                                <!-- Kategori -->
+                                <td class="px-4 py-3 text-center">
+                                    @if ($menu->category === 'food')
+                                        <span
+                                            class="inline-flex items-center rounded-full
+                                                 bg-green-100 text-green-700
+                                                 px-3 py-1 text-xs font-semibold">
+                                            Makanan
+                                        </span>
+                                    @elseif ($menu->category === 'drink')
+                                        <span
+                                            class="inline-flex items-center rounded-full
+                                                 bg-blue-100 text-blue-700
+                                                 px-3 py-1 text-xs font-semibold">
+                                            Minuman
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center rounded-full
+                                                 bg-yellow-100 text-yellow-700
+                                                 px-3 py-1 text-xs font-semibold">
+                                            Snack
+                                        </span>
+                                    @endif
+                                </td>
 
-                </tbody>
-            </table>
+                                <!-- Aksi -->
+                                <td class="px-4 py-3 text-center">
+                                    <div class="flex justify-center gap-2">
+                                        <a href="{{ route('admin.menu.edit', $menu->id) }}"
+                                            class="rounded-lg bg-yellow-400 hover:bg-yellow-500
+                                              px-3 py-1 text-white text-xs font-semibold transition">
+                                            Edit
+                                        </a>
+
+                                        <form action="{{ route('admin.menu.destroy', $menu->id) }}" method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                class="rounded-lg bg-red-500 hover:bg-red-600
+                                                   px-3 py-1 text-white text-xs font-semibold transition">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-6 text-center text-gray-400 italic">
+                                    Data menu belum tersedia
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
         </div>
-    </div>
-</div>
+    </section>
 @endsection

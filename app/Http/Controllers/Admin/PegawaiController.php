@@ -12,7 +12,7 @@ class PegawaiController extends Controller
     public function index()
     {
         $pegawais = User::where('role', 'pegawai')->latest()->get();
-        return view('admin.pegawai.index', compact('pegawais'));
+        return view('admin.pegawai.index', compact('pegawais'), );
     }
 
     /**

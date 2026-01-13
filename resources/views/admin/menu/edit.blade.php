@@ -3,108 +3,121 @@
 @section('title', 'Edit Menu')
 
 @section('content')
-<div class="container mt-4">
+    <div class="max-w-3xl mx-auto px-4 py-6 mb-26">
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning">
-            <h5 class="mb-0">✏️ Edit Menu</h5>
-        </div>
+        <div class="bg-white shadow rounded-lg overflow-hidden">
 
-        <div class="card-body">
+            {{-- Header --}}
+            <div class="bg-yellow-400 px-6 py-4">
+                <h2 class="text-lg font-semibold text-gray-800">✏️ Edit Menu</h2>
+            </div>
 
-            {{-- Error Validasi --}}
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            {{-- Body --}}
+            <div class="p-6 space-y-6">
 
-            {{-- FORM --}}
-            <form action="{{ route('admin.menu.update', $menu->id) }}"
-                  method="POST"
-                  enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+                {{-- Error --}}
+                @if ($errors->any())
+                    <div class="bg-red-100 text-red-700 p-4 rounded">
+                        <ul class="list-disc ml-5 text-sm">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-                {{-- Nama Menu --}}
-                <div class="mb-3">
-                    <label class="form-label">Nama Menu</label>
-                    <input type="text"
-                           name="name"
-                           class="form-control"
-                           value="{{ old('name', $menu->name) }}"
-                           required>
-                </div>
+                <form action="{{ route('admin.menu.update', $menu->id) }}" method="POST" enctype="multipart/form-data"
+                    class="space-y-5">
+                    @csrf
+                    @method('PUT')
 
-                {{-- Harga --}}
-                <div class="mb-3">
-                    <label class="form-label">Harga</label>
-                    <input type="number"
-                           name="price"
-                           class="form-control"
-                           value="{{ old('price', $menu->price) }}"
-                           min="0"
-                           required>
-                </div>
+                    {{-- Nama --}}
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Nama Menu</label>
+                        <input type="text" name="name" value="{{ old('name', $menu->name) }}"
+                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-yellow-200" required>
+                    </div>
 
-                {{-- Kategori --}}
-                <div class="mb-3">
-                    <label class="form-label">Kategori</label>
-                    <select name="category" class="form-control" required>
-                        <option value="food"  {{ old('category', $menu->category) == 'food' ? 'selected' : '' }}>
-                            Makanan
-                        </option>
-                        <option value="drink" {{ old('category', $menu->category) == 'drink' ? 'selected' : '' }}>
-                            Minuman
-                        </option>
-                        <option value="snack" {{ old('category', $menu->category) == 'snack' ? 'selected' : '' }}>
-                            Snack
-                        </option>
-                    </select>
-                </div>
+                    {{-- Harga --}}
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Harga</label>
+                        <input type="number" name="price" value="{{ old('price', $menu->price) }}" min="0"
+                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-yellow-200" required>
+                    </div>
 
-                {{-- FOTO MENU (DITAMBAHKAN) --}}
-                <div class="mb-3">
-                    <label class="form-label">Foto Menu</label><br>
+                    {{-- Kategori --}}
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Kategori</label>
+                        <select name="category" class="w-full border rounded px-3 py-2 focus:ring focus:ring-yellow-200"
+                            required>
+                            <option value="food" {{ $menu->category == 'food' ? 'selected' : '' }}>Makanan</option>
+                            <option value="drink" {{ $menu->category == 'drink' ? 'selected' : '' }}>Minuman</option>
+                            <option value="snack" {{ $menu->category == 'snack' ? 'selected' : '' }}>Snack</option>
+                        </select>
+                    </div>
 
-                    @if ($menu->image)
-                        <img src="{{ asset('storage/' . $menu->image) }}"
-                             alt="{{ $menu->name }}"
-                             class="rounded mb-2"
-                             style="width: 20px; height: 20px; object-fit: cover;">
-                    @else
-                        <span class="text-muted fst-italic">Belum ada foto</span>
-                    @endif
+                    {{-- Foto --}}
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Foto Menu</label>
 
-                    <input type="file"
-                           name="image"
-                           class="form-control mt-2"
-                           accept="image/*">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    <small class="text-muted">
-                        Kosongkan jika tidak ingin mengganti foto
-                    </small>
-                </div>
+                            {{-- Foto Lama --}}
+                            <div class="text-center">
+                                <p class="text-sm font-semibold mb-2">Foto Lama</p>
+                                @if ($menu->image)
+                                    <img src="{{ asset('storage/' . $menu->image) }}"
+                                        class="mx-auto w-36 h-36 object-cover rounded border">
+                                @else
+                                    <p class="text-gray-400 italic text-sm">Belum ada foto</p>
+                                @endif
+                            </div>
 
-                {{-- Tombol --}}
-                <div class="d-flex justify-content-between">
-                    <a href="{{ route('admin.menu.index') }}" class="btn btn-secondary">
-                        Kembali
-                    </a>
+                            {{-- Preview Baru --}}
+                            <div class="text-center">
+                                <p class="text-sm font-semibold mb-2">Preview Foto Baru</p>
+                                <img id="preview-image" class="mx-auto w-36 h-36 object-cover rounded border hidden">
+                                <p id="preview-text" class="text-gray-400 italic text-sm">
+                                    Belum ada foto dipilih
+                                </p>
+                            </div>
 
-                    <button type="submit" class="btn btn-success">
-                        Update Menu
-                    </button>
-                </div>
+                        </div>
 
-            </form>
+                        <input type="file" name="image" accept="image/*" class="mt-4 w-full border rounded px-3 py-2">
 
+                        <p class="text-xs text-gray-500 mt-1">
+                            Kosongkan jika tidak ingin mengganti foto
+                        </p>
+                    </div>
+
+                    {{-- Tombol --}}
+                    <div class="flex justify-between pt-4">
+                        <a href="{{ route('admin.menu.index') }}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                            Kembali
+                        </a>
+
+                        <button type="submit" class="px-5 py-2 bg-yellow-500 text-white rounded hover:bg-green-700">
+                            Update Menu
+                        </button>
+                    </div>
+
+                </form>
+            </div>
         </div>
     </div>
 
-</div>
+    {{-- Preview Image --}}
+    <script>
+        document.querySelector('input[name="image"]').addEventListener('change', e => {
+            const img = document.getElementById('preview-image')
+            const text = document.getElementById('preview-text')
+
+            if (e.target.files[0]) {
+                img.src = URL.createObjectURL(e.target.files[0])
+                img.classList.remove('hidden')
+                text.classList.add('hidden')
+            }
+        })
+    </script>
 @endsection

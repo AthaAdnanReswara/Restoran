@@ -7,6 +7,14 @@
             <div class="h-1 w-16 bg-yellow-500 mt-3 rounded-full"></div>
         </div>
 
+        <div id="cartList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+        <div class="mt-6 flex justify-between items-center">
+            <h3 class="font-bold text-xl">Total</h3>
+            <p id="cartTotal" class="font-bold text-xl text-yellow-500">Rp 0</p>
+        </div>
+
+
         <div class="wrapper-menu mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
             <div class="item-menu rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
                 <img class="rounded-2xl w-full object-cover h-48" src="{{ asset('images/burger.jpg') }}" alt="Burger">
@@ -377,6 +385,4 @@
             }
         });
     </script>
-
-    <script src="{{ asset('js/script.js') }}"></script>
 @endsection

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Pelanggan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
+use App\Models\Table;
 use Illuminate\Http\Request;
 
 class PelangganController extends Controller
@@ -12,7 +14,14 @@ class PelangganController extends Controller
      */
     public function index()
     {
-        return view('pelanggan.index');
+        $menus = Menu::orderBy('category')->get()->groupBy('category');
+
+        return view('pelanggan.index', [
+            'menus' => $menus,
+            'tables' => Table::where('status', 'available')->get(),
+            'customerName' => session('customer_name'),
+            'tableId' => session('table_id'),
+        ]);
     }
 
     public function order()
