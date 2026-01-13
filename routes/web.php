@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PegawaiController;
+use App\Http\Controllers\Admin\TabelController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Pelanggan\OrderController;
@@ -23,6 +24,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::resource('menu', MenuController::class);
     //Pegawai Resource
     Route::resource('pegawai', PegawaiController::class);
+    //Tabel Resource
+    Route::resource('table', TabelController::class);
 });
 
 // Prefix Pegawai

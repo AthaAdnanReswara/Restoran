@@ -24,6 +24,11 @@ class OrderController extends Controller
             'table_id' => 'required|exists:tables,id',
         ]);
 
+        // Update status meja menjadi occupied
+        Table::findOrFail($request->table_id)->update([
+            'status' => 'occupied'
+        ]);
+
         session([
             'customer_name' => $request->customer_name,
             'table_id' => $request->table_id,

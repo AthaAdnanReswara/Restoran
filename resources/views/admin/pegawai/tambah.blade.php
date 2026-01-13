@@ -10,7 +10,7 @@
             <h2 class="text-2xl font-bold flex items-center gap-2">
                 ➕ Tambah Pegawai
             </h2>
-            <div class="h-1 w-28 bg-yellow-500 rounded mt-2"></div>
+            <div class="h-1 w-60 bg-yellow-500 rounded mt-2"></div>
             <p class="text-gray-600 mt-2 text-sm">
                 Tambahkan akun pegawai baru untuk mengelola sistem.
             </p>

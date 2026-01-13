@@ -15,11 +15,8 @@
                     <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
                         Menu
                     </a>
-                    <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Order
-                    </a>
-                    <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Profile
+                    <a href="{{ route('admin.table.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                        Table
                     </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
@@ -36,6 +33,9 @@
                     Home
                 </a>
                 <a href="{{ route('pelanggan.order') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                    Order
+                </a>
+                <a href="{{ route('pelanggan.transaction') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
                     Order
                 </a>
             @endguest
@@ -77,6 +77,15 @@
                     class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
                     title="Menu">
                     <svg class="w-7 h-7 {{ request()->routeIs('admin.menu.*') ? 'text-yellow-500' : 'text-gray-400' }}"
+                        fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                    </svg>
+                </a>
+                <!-- Table -->
+                <a href="{{ route('admin.table.index') }}"
+                    class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
+                    title="Menu">
+                    <svg class="w-7 h-7 {{ request()->routeIs('admin.table.*') ? 'text-yellow-500' : 'text-gray-400' }}"
                         fill="currentColor" viewBox="0 0 24 24">
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                     </svg>
