@@ -11,6 +11,10 @@
 
 <body>
     @include('layouts.navbar')
+
+    <!-- Responsive padding untuk navbar yang fixed -->
+    <div class="pt-0 sm:pt-16 md:pt-20 lg:pt-10"></div>
+
     @include('layouts.header')
 
     @yield('content')
