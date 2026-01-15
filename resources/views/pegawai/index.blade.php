@@ -10,56 +10,122 @@
         </div>
 
         <div class="wrapper-menu mx-2">
-            <!-- Category -->
-            <div class="category-title mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Food Orders</h3>
-                <p class="text-sm text-gray-500">Incoming customer orders</p>
-            </div>
-
             <!-- Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-2">
-                <div
-                    class="item-menu bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
-                    <!-- Image -->
-                    <img class="w-full h-40 object-cover" src="{{ asset('images/burger.jpg') }}" alt="Burger">
-
-                    <!-- Content -->
-                    <div class="p-4">
-                        <!-- Customer Info -->
-                        <div class="space-y-2 mb-4">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Customer</span>
-                                <span class="font-semibold text-gray-800">Hikmal</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Table</span>
-                                <span class="font-semibold text-yellow-500">#16</span>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex gap-3">
-                            <button
-                                class="w-1/2 bg-red-500 text-white py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-red-600 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                    width="24px" fill="#e3e3e3">
-                                    <path
-                                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
-                                </svg>
-                                Reject
-                            </button>
-
-                            <button
-                                class="w-1/2 bg-green-500 text-white py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-green-600 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                Accept
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div id="ordersGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-2">
+                <!-- Orders will be injected here via AJAX polling -->
             </div>
         </div>
 
 
     </section>
+@endsection
+
+@section('scripts')
+    <script>
+        const fetchPending = () => {
+            fetch("{{ route('pegawai.orders.pending') }}", { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+                .then(res => res.json())
+                .then(data => {
+                    const grid = document.getElementById('ordersGrid');
+                    if (grid && data.html !== undefined) grid.innerHTML = data.html;
+
+                    // attach handlers with SweetAlert confirmation and toast
+                    document.querySelectorAll('.accept-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const parent = btn.closest('.item-menu');
+                            const ids = Array.from(parent.querySelectorAll('.trx-id')).map(i=>i.value);
+                            Swal.fire({
+                                title: 'Terima pesanan?',
+                                text: `Terima pesanan dari ${parent.querySelector('.font-semibold')?.textContent || ''}?`,
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: 'Terima',
+                                cancelButtonText: 'Batal'
+                            }).then(async (result) => {
+                                if (result.isConfirmed) {
+                                    for (const id of ids) {
+                                        await fetch("{{ route('pegawai.orders.accept') }}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                            },
+                                            body: JSON.stringify({ transaction_id: id })
+                                        });
+                                    }
+                                    Swal.fire({toast:true, position:'top-end', icon:'success', title:'Pesanan diterima', showConfirmButton:false, timer:2000});
+                                    fetchPending();
+                                }
+                            });
+                        });
+                    });
+
+                    document.querySelectorAll('.reject-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const parent = btn.closest('.item-menu');
+                            const ids = Array.from(parent.querySelectorAll('.trx-id')).map(i=>i.value);
+                            Swal.fire({
+                                title: 'Tolak pesanan?',
+                                text: `Tolak pesanan dari ${parent.querySelector('.font-semibold')?.textContent || ''}?`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Tolak',
+                                cancelButtonText: 'Batal'
+                            }).then(async (result) => {
+                                if (result.isConfirmed) {
+                                    for (const id of ids) {
+                                        await fetch("{{ route('pegawai.orders.reject') }}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                            },
+                                            body: JSON.stringify({ transaction_id: id })
+                                        });
+                                    }
+                                    Swal.fire({toast:true, position:'top-end', icon:'success', title:'Pesanan ditolak', showConfirmButton:false, timer:2000});
+                                    fetchPending();
+                                }
+                            });
+                        });
+
+                        // Completed button handler for accepted orders
+                        document.querySelectorAll('.complete-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const parent = btn.closest('.item-menu');
+                                const ids = Array.from(parent.querySelectorAll('.trx-id')).map(i=>i.value);
+                                Swal.fire({
+                                    title: 'Tandai selesai?',
+                                    text: `Tandai pesanan dari ${parent.querySelector('.font-semibold')?.textContent || ''} sebagai selesai?`,
+                                    icon: 'question',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Selesai',
+                                    cancelButtonText: 'Batal'
+                                }).then(async (result) => {
+                                    if (result.isConfirmed) {
+                                        for (const id of ids) {
+                                            await fetch("{{ route('pegawai.orders.complete') }}", {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                },
+                                                body: JSON.stringify({ transaction_id: id })
+                                            });
+                                        }
+                                        Swal.fire({toast:true, position:'top-end', icon:'success', title:'Pesanan selesai', showConfirmButton:false, timer:2000});
+                                        fetchPending();
+                                    }
+                                });
+                            });
+                        });
+                    });
+                })
+                .catch(err => console.error('fetchPending err', err));
+        }
+
+        // initial fetch + polling
+        fetchPending();
+        setInterval(fetchPending, 3000);
+    </script>
 @endsection

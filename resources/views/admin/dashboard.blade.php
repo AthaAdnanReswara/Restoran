@@ -20,15 +20,66 @@
             <p class="text-xs sm:text-sm text-gray-500">Total Pesanan</p>
             <p class="text-2xl sm:text-3xl font-bold mt-2">120</p>
         </div>
+        {{-- STATISTIK --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
 
-        <div class="bg-white p-4 sm:p-5 rounded-xl shadow">
-            <p class="text-xs sm:text-sm text-gray-500">Hari Ini</p>
-            <p class="text-2xl sm:text-3xl font-bold mt-2">18</p>
+            <div class="bg-white p-5 rounded-lg shadow">
+                <p class="text-sm text-gray-500">Total Pesanan</p>
+                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $totalOrders ?? 0 }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow">
+                <p class="text-sm text-gray-500">Pesanan Hari Ini</p>
+                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $ordersToday ?? 0 }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow">
+                <p class="text-sm text-gray-500">Menu Minuman</p>
+                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $drinksCount ?? 0 }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow">
+                <p class="text-sm text-gray-500">Menu Snack</p>
+                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $snackCount ?? 0 }}</p>
+            </div>
+
         </div>
 
-        <div class="bg-white p-4 sm:p-5 rounded-xl shadow">
-            <p class="text-xs sm:text-sm text-gray-500">Menu Minuman</p>
-            <p class="text-2xl sm:text-3xl font-bold mt-2">25</p>
+        {{-- GRAFIK + TABEL --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {{-- GRAFIK PENDAPATAN --}}
+            <div class="bg-white rounded-xl shadow p-6 lg:col-span-2">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                    Pendapatan Per Hari
+                </h2>
+
+                <div class="w-full mx-auto">
+                    <canvas id="incomeChart" height="320"></canvas>
+                </div>
+            </div>
+
+
+            {{-- PESANAN TERBARU --}}
+            <div class="bg-white p-6 rounded-lg shadow lg:col-span-1">
+                <h2 class="text-lg font-semibold mb-4">
+                    🧾 Pesanan Terbaru
+                </h2>
+
+                    <div class="space-y-4 text-sm">
+                        @forelse($recentOrders as $r)
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <div>
+                                    <p class="font-semibold">Meja {{ $r->table_id }}</p>
+                                    <p class="text-gray-500">{{ $r->menu->name ?? '-' }} (x{{ $r->quantity }})</p>
+                                </div>
+                                <span class="text-green-600 font-semibold">Rp {{ number_format($r->total_price, 0, ',', '.') }}</span>
+                            </div>
+                        @empty
+                            <div class="text-gray-500">Belum ada pesanan</div>
+                        @endforelse
+                    </div>
+            </div>
         </div>
 
         <div class="bg-white p-4 sm:p-5 rounded-xl shadow">
@@ -46,38 +97,40 @@
             <h2 class="text-base sm:text-lg font-semibold mb-4">
                 📈 Pendapatan Per Hari
             </h2>
-
-            <div class="relative w-full h-64 sm:h-72">
-                <canvas id="incomeChart"></canvas>
-            </div>
-        </div>
-
-        {{-- PESANAN TERBARU --}}
-        <div class="bg-white p-4 sm:p-6 rounded-xl shadow">
-            <h2 class="text-base sm:text-lg font-semibold mb-4">
-                🧾 Pesanan Terbaru
-            </h2>
-
-            <div class="space-y-4 text-sm">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <div>
-                        <p class="font-semibold">Meja 1</p>
-                        <p class="text-gray-500 text-xs">Es Teh Manis (x2)</p>
-                    </div>
-                    <span class="text-green-600 font-semibold">
-                        Rp 10.000
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center border-b pb-2">
-                    <div>
-                        <p class="font-semibold">Meja 3</p>
-                        <p class="text-gray-500 text-xs">Kentang Snack</p>
-                    </div>
-                    <span class="text-yellow-600 font-semibold">
-                        Rp 8.000
-                    </span>
-                </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="border-b text-gray-600">
+                            <th class="py-3 px-2 text-left">Meja</th>
+                            <th class="py-3 px-2 text-left">Menu</th>
+                            <th class="py-3 px-2 text-left">Jumlah</th>
+                            <th class="py-3 px-2 text-left">Total</th>
+                            <th class="py-3 px-2 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($transactionsList as $t)
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="py-3 px-2">Meja {{ $t->table_id }}</td>
+                                <td class="py-3 px-2">{{ $t->menu->name ?? '-' }}</td>
+                                <td class="py-3 px-2">{{ $t->quantity }}</td>
+                                <td class="py-3 px-2">Rp {{ number_format($t->total_price, 0, ',', '.') }}</td>
+                                <td class="py-3 px-2">
+                                    @php
+                                        $status = $t->status;
+                                        $badge = 'bg-gray-100 text-gray-700';
+                                        if ($status === 'completed') { $badge = 'bg-green-100 text-green-600'; }
+                                        if ($status === 'accepted') { $badge = 'bg-yellow-100 text-yellow-600'; }
+                                        if ($status === 'cancelled') { $badge = 'bg-red-100 text-red-600'; }
+                                    @endphp
+                                    <span class="px-3 py-1 text-xs rounded-full {{ $badge }}">{{ ucfirst($status) }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="5" class="py-4 text-center text-gray-500">Belum ada transaksi</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 
