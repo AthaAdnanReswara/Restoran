@@ -4,134 +4,22 @@
     <section id="orderList" class="pb-40 md:pt-24">
         <div class="mt-6 mx-4">
             <h2 class="text-4xl font-bold text-gray-900">List All Order</h2>
-            <div class="h-1 w-16 bg-yellow-500 mt-3 rounded-full"></div>
+            <div class="h-1 w-55 bg-yellow-500 mt-3 rounded-full"></div>
         </div>
 
-        <div id="cartList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-
-        <div class="mt-6 flex justify-between items-center">
-            <h3 class="font-bold text-xl">Total</h3>
-            <p id="cartTotal" class="font-bold text-xl text-yellow-500">Rp 0</p>
+        <div id="cartList" class="wrapper-menu mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
+            @include('pelanggan.partials.cart', ['items' => $cartItems])
         </div>
 
 
-        <div class="wrapper-menu mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
-            <div class="item-menu rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
-                <img class="rounded-2xl w-full object-cover h-48" src="{{ asset('images/burger.jpg') }}" alt="Burger">
-                <div class="p-4">
-                    <div class="info-menu flex justify-between items-center mb-3">
-                        <h3 class="font-semibold text-gray-900">Burger</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu flex justify-between items-center bg-gray-100 rounded-lg p-2">
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">+</button>
-                        <p class="font-semibold">10</p>
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">-</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-menu rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
-                <img class="rounded-2xl w-full object-cover h-48" src="{{ asset('images/juice.jpg') }}" alt="Juice">
-                <div class="p-4">
-                    <div class="info-menu flex justify-between items-center mb-3">
-                        <h3 class="font-semibold text-gray-900">Juice</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu flex justify-between items-center bg-gray-100 rounded-lg p-2">
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">+</button>
-                        <p class="font-semibold">0</p>
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">-</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-menu rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
-                <img class="rounded-2xl w-full object-cover h-48" src="{{ asset('images/snack.jpg') }}" alt="Snack">
-                <div class="p-4">
-                    <div class="info-menu flex justify-between items-center mb-3">
-                        <h3 class="font-semibold text-gray-900">Snack</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu flex justify-between items-center bg-gray-100 rounded-lg p-2">
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">+</button>
-                        <p class="font-semibold">0</p>
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">-</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-menu rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
-                <img class="rounded-2xl w-full object-cover h-48" src="{{ asset('images/snack.jpg') }}" alt="Snack">
-                <div class="p-4">
-                    <div class="info-menu flex justify-between items-center mb-3">
-                        <h3 class="font-semibold text-gray-900">Snack</h3>
-                        <span class="font-bold text-yellow-500">$5.00</span>
-                    </div>
-
-                    <div class="button-menu flex justify-between items-center bg-gray-100 rounded-lg p-2">
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">+</button>
-                        <p class="font-semibold">0</p>
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-lg font-semibold hover:bg-yellow-500 hover:text-white rounded transition">-</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-10 mx-4">
-            <h2 class="text-4xl font-bold text-gray-900">Order History</h2>
-            <div class="h-1 w-16 bg-yellow-500 mt-3 rounded-full"></div>
-        </div>
-
-        <div class="transaction-list mt-6 px-4 space-y-4">
-            <div
-                class="transaction-item border border-gray-200 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-900">Order #12345</h3>
-                        <p class="text-sm text-gray-500 mt-1">Date: 2024-06-15</p>
-                    </div>
-                    <span class="font-bold text-yellow-500 text-lg">$25.00</span>
-                </div>
-                <div class="border-t border-gray-100 pt-3">
-                    <p class="text-gray-700 text-sm">Items: Burger, Juice, Snack</p>
-                </div>
-            </div>
-
-            <div
-                class="transaction-item border border-gray-200 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-900">Order #12344</h3>
-                        <p class="text-sm text-gray-500 mt-1">Date: 2024-06-14</p>
-                    </div>
-                    <span class="font-bold text-yellow-500 text-lg">$15.00</span>
-                </div>
-                <div class="border-t border-gray-100 pt-3">
-                    <p class="text-gray-700 text-sm">Items: Juice, Snack</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-8 mx-4 bg-white rounded-xl border border-gray-200 p-6">
+        <div class="mt-8 mx-4 relative bg-white rounded-xl border border-gray-200 p-6">
             <div class="flex justify-between items-center mb-6">
-                <div>
+                    <div class="mt-5">
                     <p class="text-gray-600 text-sm">Total Amount</p>
-                    <p class="text-3xl font-bold text-gray-900">Rp54.000</p>
+                    <p id="cartTotal" class="text-3xl font-bold text-gray-900">Rp {{ number_format($cartItems->sum('total_price'), 0, ',', '.') }}</p>
                 </div>
                 <button id="promoBtn"
-                    class="px-5 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition font-medium text-sm cursor-pointer">
+                    class="px-5 py-2 absolute top-5 right-5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition font-medium text-sm cursor-pointer">
                     Add Promo Code
                 </button>
             </div>
@@ -146,6 +34,17 @@
                     </svg>
                     Order Now
                 </button>
+            </div>
+        </div>
+
+        <div class="transaction-list mt-6 px-4 space-y-4">
+            <div class="mt-10 mx-4">
+                <h2 class="text-4xl font-bold text-gray-900">Order History</h2>
+                <div class="h-1 w-55 bg-yellow-500 mt-3 rounded-full"></div>
+            </div>
+
+            <div id="orderHistoryContainer" class="mt-6">
+                @include('pelanggan.partials.history', ['transactions' => $transactions])
             </div>
         </div>
 
@@ -182,6 +81,7 @@
         <div id="orderModal"
             class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg m-4 my-8">
+
                 <!-- Header -->
                 <div class="border-b border-gray-200 p-6">
                     <div class="flex justify-between items-center">
@@ -192,98 +92,63 @@
 
                 <!-- Body -->
                 <div class="p-6 space-y-6">
-                    <!-- Order Items Summary -->
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h4>
-                        <div class="bg-gray-50 rounded-lg p-4 space-y-3 max-h-48 overflow-y-auto">
-                            <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                                <div>
-                                    <p class="font-semibold text-gray-900">Burger</p>
-                                    <p class="text-sm text-gray-600">Qty: 10</p>
-                                </div>
-                                <p class="font-semibold text-gray-900">$50.00</p>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                                <div>
-                                    <p class="font-semibold text-gray-900">Juice</p>
-                                    <p class="text-sm text-gray-600">Qty: 0</p>
-                                </div>
-                                <p class="font-semibold text-gray-900">$0.00</p>
-                            </div>
-                            <div class="flex justify-between items-center py-2">
-                                <div>
-                                    <p class="font-semibold text-gray-900">Snack</p>
-                                    <p class="text-sm text-gray-600">Qty: 0</p>
-                                </div>
-                                <p class="font-semibold text-gray-900">$0.00</p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Total -->
-                    <div class="border-t border-b border-gray-200 py-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <p class="text-gray-600">Subtotal</p>
-                            <p class="font-semibold text-gray-900">Rp54.000</p>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <p class="text-lg font-bold text-gray-900">Total</p>
-                            <p class="text-2xl font-bold text-yellow-500">Rp54.000</p>
-                        </div>
+                    <div id="orderSummaryContainer">
+                        @include('pelanggan.partials.order_summary', ['items' => $cartItems])
                     </div>
 
                     <!-- Payment Method -->
-                    <form id="orderForm" class="space-y-4">
+                    <form method="POST" action="{{ route('pelanggan.order.confirm') }}" class="space-y-4">
+                        @csrf
+
                         <div>
-                            <label class="block text-lg font-semibold text-gray-900 mb-4">Payment Method</label>
+                            <label class="block text-lg font-semibold text-gray-900 mb-4">
+                                Payment Method
+                            </label>
+
                             <div class="space-y-3">
-                                <!-- Cash Option -->
+                                <!-- Cash -->
                                 <label
                                     class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition">
                                     <input type="radio" name="payment_method" value="cash" checked
-                                        class="w-5 h-5 text-yellow-500 cursor-pointer">
+                                        class="w-5 h-5 text-yellow-500">
                                     <div class="ml-4 flex-1">
                                         <p class="font-semibold text-gray-900">Cash</p>
-                                        <p class="text-sm text-gray-600">Pay when order arrives</p>
+                                        <p class="text-sm text-gray-600">
+                                            Pay when order arrives
+                                        </p>
                                     </div>
-                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0 2c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4z">
-                                        </path>
-                                    </svg>
                                 </label>
 
-                                <!-- Cashless Option -->
+                                <!-- Cashless -->
                                 <label
                                     class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition">
                                     <input type="radio" name="payment_method" value="cashless"
-                                        class="w-5 h-5 text-yellow-500 cursor-pointer">
+                                        class="w-5 h-5 text-yellow-500">
                                     <div class="ml-4 flex-1">
                                         <p class="font-semibold text-gray-900">Cashless</p>
-                                        <p class="text-sm text-gray-600">Bank transfer, e-wallet, or card</p>
+                                        <p class="text-sm text-gray-600">
+                                            E-wallet / Transfer / QRIS
+                                        </p>
                                     </div>
-                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 10h18M7 15h10m4 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
-                                    </svg>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
+                        <!-- Actions -->
                         <div class="flex gap-3 pt-4">
                             <button type="button" id="cancelOrderBtn"
-                                class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold">
+                                class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold">
                                 Cancel
                             </button>
+
                             <button type="submit"
-                                class="flex-1 px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition font-semibold">
+                                class="flex-1 px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-semibold">
                                 Confirm Order
                             </button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -363,15 +228,15 @@
             }
         });
 
-        // Handle order form submission
-        orderForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        // // Handle order form submission
+        // orderForm.addEventListener('submit', (e) => {
+        //     e.preventDefault();
+        //     const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
 
-            alert(`Order confirmed!\nPayment Method: ${paymentMethod === 'cash' ? 'Cash' : 'Cashless'}`);
-            closeOrderModal();
-            // Tambahkan logika untuk send ke backend di sini
-        });
+        //     alert(`Order confirmed!\nPayment Method: ${paymentMethod === 'cash' ? 'Cash' : 'Cashless'}`);
+        //     closeOrderModal();
+        //     // Tambahkan logika untuk send ke backend di sini
+        // });
 
         // Close modals with Escape key
         document.addEventListener('keydown', (e) => {
@@ -384,5 +249,68 @@
                 }
             }
         });
+    </script>
+    <script>
+        // Auto sign-out pelanggan after 5 minutes (300000 ms) of inactivity
+        (function(){
+            const SIGNOUT_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+            let timer = null;
+
+            const resetTimer = () => {
+                if (timer) clearTimeout(timer);
+                timer = setTimeout(() => {
+                    // perform sign out via POST
+                    fetch("{{ route('pelanggan.signout') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ auto: true })
+                    }).then(() => {
+                        if (window.Swal) {
+                            Swal.fire({toast:true, position:'top-end', icon:'info', title:'Sesi berakhir (otomatis), Anda telah keluar', showConfirmButton:false, timer:2500});
+                        }
+                        setTimeout(() => location.reload(), 800);
+                    }).catch(() => location.reload());
+                }, SIGNOUT_TIMEOUT);
+            };
+
+            // reset on common interactions
+            ['click','keydown','mousemove','touchstart'].forEach(evt => {
+                document.addEventListener(evt, resetTimer, { passive: true });
+            });
+
+            // start timer
+            resetTimer();
+        })();
+    </script>
+    <script>
+        // polling order history for realtime status updates
+        (function(){
+            let prevHtml = '';
+            const fetchStatus = () => {
+                fetch("{{ route('pelanggan.order.status') }}", { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+                    .then(res => res.json())
+                    .then(data => {
+                        const container = document.getElementById('orderHistoryContainer');
+                        if (!container) return;
+                        if (data.html !== undefined) {
+                            if (prevHtml && prevHtml !== data.html) {
+                                if (window.Swal) {
+                                    Swal.fire({toast:true, position:'top-end', icon:'info', title:'Status pesanan diperbarui', showConfirmButton:false, timer:2500});
+                                }
+                            }
+                            container.innerHTML = data.html;
+                            prevHtml = data.html;
+                        }
+                    })
+                    .catch(err => console.error('fetchStatus err', err));
+            };
+
+            // start polling every 3s
+            fetchStatus();
+            setInterval(fetchStatus, 3000);
+        })();
     </script>
 @endsection

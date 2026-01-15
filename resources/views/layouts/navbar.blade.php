@@ -6,13 +6,13 @@
             {{-- ================= ADMIN ================= --}}
             @auth
                 @if (auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                    <a href="{{ route('admin.dashboard') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.dashboard') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                         Home
                     </a>
-                    <a href="{{ route('admin.pegawai.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                    <a href="{{ route('admin.pegawai.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.pegawai.*') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                         Pegawai
                     </a>
-                    <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                    <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.menu.*') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                         Menu
                     </a>
                     <a href="#" class="nav-link py-2 px-4 transition hover:bg-gray-100">
@@ -24,6 +24,22 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button
+                            type="submit" class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
+                            Logout
+                        </button>
+                    </form>
+                @endif
+            @endauth
+            {{-- ================= PEGAWAI ================= --}}
+            @auth
+                @if (auth()->user()->role === 'pegawai')
+                    <a href="{{ route('pegawai.dashboard') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pegawai.dashboard') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
+                        Home
+                    </a>
+
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button
                             type="submit"class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
                             Logout
                         </button>
@@ -32,12 +48,16 @@
             @endauth
             {{-- ================= PELANGGAN / GUEST ================= --}}
             @guest
-                <a href="{{ route('pelanggan.home') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                <a href="{{ route('pelanggan.home') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100  {{ request()->routeIs('pelanggan.home') ? 'text-yellow-500' : 'text-gray-400' }}">
                     Home
                 </a>
-                <a href="{{ route('pelanggan.order') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
+                <a href="{{ route('pelanggan.order') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pelanggan.order') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                     Order
                 </a>
+                <form method="POST" action="{{ route('pelanggan.signout') }}">
+                    @csrf
+                    <button type="submit" class="px-3 py-2 bg-red-100 text-red-600 rounded-lg text-sm">Sign Out</button>
+                </form>
             @endguest
         </div>
     </div>
@@ -126,7 +146,7 @@
         @endauth
 
         {{-- ================= PELANGGAN / GUEST ================= --}}
-        @guest
+            @guest
             <!-- Home -->
             <a href="{{ route('pelanggan.home') }}"
                 class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
@@ -158,6 +178,17 @@
                         d="M240-80q-50 0-85-35t-35-85v-120h120v-560h600v680q0 50-35 85t-85 35H240Zm480-80q17 0 28.5-11.5T760-200v-600H320v480h360v120q0 17 11.5 28.5T720-160ZM360-600v-80h360v80H360Zm0 120v-80h360v80H360ZM240-160h360v-80H200v40q0 17 11.5 28.5T240-160Zm0 0h-40 400-360Z" />
                 </svg>
             </a>
+
+            <!-- Sign Out (mobile: icon) -->
+            <form method="POST" action="{{ route('pelanggan.signout') }}" class="flex">
+                @csrf
+                <button type="submit" title="Sign Out"
+                    class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300 text-red-600 hover:text-red-700">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3H10v2h10v14H10v2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+                    </svg>
+                </button>
+            </form>
         @endguest
     </div>
 </nav>

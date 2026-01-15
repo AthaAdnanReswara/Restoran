@@ -13,15 +13,28 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('table_id')->constrained('tables')->onDelete('cascade');
-            $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
-            $table->string('customer_name', 255);
+            $table->foreignId('table_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('menu_id')->constrained()->cascadeOnDelete();
+
+            $table->string('customer_name');
             $table->integer('quantity');
+
+            $table->decimal('price', 10, 2);
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'completed', 'cancelled']);
-            $table->enum('payment_method', ['cash', 'cashless']);
+
+            $table->enum('status', [
+                'draft',
+                'ordered',
+                'accepted',
+                'completed',
+                'cancelled'
+            ])->default('draft');
+
+            $table->enum('payment_method', ['cash', 'cashless'])->nullable();
+
             $table->text('notes')->nullable();
             $table->text('receipt')->nullable();
+
             $table->timestamps();
         });
     }

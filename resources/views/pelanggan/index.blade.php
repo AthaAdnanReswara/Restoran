@@ -64,7 +64,8 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
                     @foreach ($items as $menu)
-                        <div class="item-menu bg-white rounded-2xl shadow hover:shadow-lg transition p-3">
+                        <div class="item-menu bg-white rounded-2xl shadow hover:shadow-lg transition p-3"
+                            data-category="{{ $category }}" data-name="{{ strtolower($menu->name) }}">
 
                             <img class="rounded-xl w-full h-36 object-cover" src="{{ asset('storage/' . $menu->image) }}"
                                 alt="{{ $menu->name }}">
@@ -78,26 +79,9 @@
                                 </span>
                             </div>
 
-                            <!-- QTY -->
-                            <div class="flex items-center justify-between mt-2">
-                                <button onclick="decreaseMenuQty({{ $menu->id }})"
-                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200">−</button>
-
-                                <span id="menu-qty-{{ $menu->id }}" class="font-semibold">0</span>
-
-                                <button onclick="increaseMenuQty({{ $menu->id }})"
-                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200">+</button>
-                            </div>
-
                             <!-- ADD TO CART -->
-                            <button
-                                onclick="addToCart({
-                                    menu_id: {{ $menu->id }},
-                                    name: '{{ $menu->name }}',
-                                    price: {{ $menu->price }},
-                                    image: '{{ $menu->image }}'
-                                })"
-                                class="w-full bg-yellow-500 text-white py-2 rounded-xl mt-2">
+                            <button data-menu="{{ $menu->id }}"
+                                class="add-to-cart-btn w-full bg-yellow-500 text-white py-2 rounded-xl mt-2">
                                 Add to Cart
                             </button>
                         </div>
@@ -139,20 +123,31 @@
                     <label class="block text-sm font-semibold mb-1">
                         Select Table
                     </label>
-                    <select name="table_id" class="w-full border rounded-lg px-4 py-2 focus:ring focus:ring-yellow-300"
-                        required>
-                        <option value="">-- Choose Table --</option>
-                        @foreach ($tables as $table)
-                            <option value="{{ $table->id }}">
-                                Table {{ $table->table_number }}
-                            </option>
-                        @endforeach
-                    </select>
+                    @if (isset($availableTablesCount) && $availableTablesCount > 0)
+                        <select name="table_id"
+                            class="w-full border rounded-lg px-4 py-2 focus:ring focus:ring-yellow-300" required>
+                            <option value="">-- Choose Table --</option>
+                            @foreach ($tables as $table)
+                                @php
+                                    $status = isset($table->status) ? trim(strtolower($table->status)) : '';
+                                    $disabled = $status !== 'available';
+                                @endphp
+                                <option value="{{ $table->id }}" {{ $disabled ? 'disabled' : '' }}>
+                                    Table {{ $table->table_number }}{{ $disabled ? ' — Occupied' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    @else
+                        <div class="px-4 py-3 rounded-lg bg-red-50 text-red-700 text-center">
+                            Semua meja sedang terisi. Silakan tunggu atau hubungi petugas.
+                        </div>
+                    @endif
                 </div>
 
                 <button
                     class="w-full bg-yellow-500 text-white py-3 rounded-xl font-semibold
-                       hover:bg-yellow-600 transition">
+                       hover:bg-yellow-600 transition"
+                    {{ isset($availableTablesCount) && $availableTablesCount > 0 ? '' : 'disabled' }}>
                     Start Order
                 </button>
             </form>
@@ -160,3 +155,50 @@
         </div>
     </div>
 @endif
+
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            const filterButtons = document.querySelectorAll('[data-filter]');
+            const items = document.querySelectorAll('.item-menu');
+
+            let activeFilter = 'all';
+
+            function setActive(btn) {
+                filterButtons.forEach(b => b.classList.remove('active', 'bg-yellow-500', 'text-white'));
+                btn.classList.add('active', 'bg-yellow-500', 'text-white');
+            }
+
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    activeFilter = this.getAttribute('data-filter');
+                    setActive(this);
+                    applyFilter();
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFilter);
+            }
+
+            function applyFilter() {
+                const q = (searchInput && searchInput.value || '').trim().toLowerCase();
+
+                items.forEach(item => {
+                    const name = (item.getAttribute('data-name') || '').toLowerCase();
+                    const cat = (item.getAttribute('data-category') || '').toLowerCase();
+
+                    const matchesSearch = q === '' || name.includes(q);
+                    const matchesCategory = activeFilter === 'all' || activeFilter === cat;
+
+                    if (matchesSearch && matchesCategory) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+@endsection
