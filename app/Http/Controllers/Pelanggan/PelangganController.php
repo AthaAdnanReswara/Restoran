@@ -83,7 +83,59 @@ class PelangganController extends Controller
 
     public function transaction()
     {
-        return view('pelanggan.transaction');
+        $customerName = session('customer_name');
+        $guestToken = session('guest_token');
+        $tableId = session('table_id');
+
+        if (!$tableId || (!$customerName && !$guestToken)) {
+            return redirect()->route('pelanggan.home')->with('error', 'Tidak ada transaksi untuk ditampilkan');
+        }
+
+        $transactions = Transaction::with('menu')
+            ->when($guestToken, fn($q) => $q->where('guest_token', $guestToken), fn($q) => $q->where('customer_name', $customerName))
+            ->where('table_id', $tableId)
+            ->whereIn('status', ['ordered', 'accepted', 'completed'])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        if ($transactions->isEmpty()) {
+            return view('pelanggan.transaction', [
+                'items' => collect(),
+                'total' => 0,
+                'orderRef' => null,
+                'placedAt' => null,
+                'status' => null,
+            ]);
+        }
+
+        // aggregate by menu_id so separate orders combine into one summary
+        $grouped = $transactions->groupBy('menu_id')->map(function ($rows) {
+            $menu = $rows->first()->menu;
+            return (object) [
+                'menu' => $menu,
+                'quantity' => $rows->sum('quantity'),
+                'total_price' => $rows->sum('total_price'),
+            ];
+        })->values();
+
+        $total = $grouped->sum(fn($i) => $i->total_price);
+
+        // pick a representative order reference and placedAt (earliest)
+        $orderRef = 'TRX-' . $transactions->first()->id;
+        $placedAt = $transactions->first()->created_at;
+
+        // determine aggregate status: completed > accepted > ordered
+        $status = 'ordered';
+        if ($transactions->contains('status', 'accepted')) $status = 'accepted';
+        if ($transactions->every(fn($t) => $t->status === 'completed')) $status = 'completed';
+
+        return view('pelanggan.transaction', [
+            'items' => $grouped,
+            'total' => $total,
+            'orderRef' => $orderRef,
+            'placedAt' => $placedAt,
+            'status' => $status,
+        ]);
     }
 
     /**
