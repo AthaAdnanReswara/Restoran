@@ -1,7 +1,7 @@
 <!-- Desktop Navbar -->
 <nav class="hidden md:flex fixed top-0 left-0 right-0 bg-white shadow-lg z-50">
     <div class="flex justify-between items-center w-full px-8 py-4">
-        <div class="logo font-bold text-2xl">Restoran</div>
+        <div class="logo font-bold text-2xl">Purple Cafe and Resto</div>
         <div class="menu flex gap-8 items-center">
             {{-- ================= ADMIN ================= --}}
             @auth
