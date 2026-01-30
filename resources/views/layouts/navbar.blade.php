@@ -6,13 +6,17 @@
             {{-- ================= ADMIN ================= --}}
             @auth
                 @if (auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.dashboard') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.dashboard') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                         Home
                     </a>
-                    <a href="{{ route('admin.pegawai.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.pegawai.*') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
-                        Pegawai
+                    <a href="{{ route('pegawai.dashboard') }}"
+                        class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pegawai.dashboard') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
+                        Orders
                     </a>
-                    <a href="{{ route('admin.menu.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.menu.*') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
+
+                    <a href="{{ route('admin.menu.index') }}"
+                        class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.menu.*') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                         Menu
                     </a>
                     <a href="{{ route('admin.table.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
@@ -20,38 +24,26 @@
                     </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button
-                            type="submit" class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
+                        <button type="submit"
+                            class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
                             Logout
                         </button>
                     </form>
                 @endif
             @endauth
-            {{-- ================= PEGAWAI ================= --}}
-            @auth
-                @if (auth()->user()->role === 'pegawai')
-                    <a href="{{ route('pegawai.dashboard') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pegawai.dashboard') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
-                        Home
-                    </a>
-
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button
-                            type="submit"class="py-2 px-4 rounded transition text-red-600 hover:bg-red-100 hover:text-red-700">
-                            Logout
-                        </button>
-                    </form>
-                @endif
-            @endauth
+            {{-- PEGAWAI features are now accessible by admin: show link under admin menu --}}
             {{-- ================= PELANGGAN / GUEST ================= --}}
             @guest
-                <a href="{{ route('pelanggan.home') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100  {{ request()->routeIs('pelanggan.home') ? 'text-yellow-500' : 'text-gray-400' }}">
+                <a href="{{ route('pelanggan.home') }}"
+                    class="nav-link py-2 px-4 transition hover:bg-gray-100  {{ request()->routeIs('pelanggan.home') ? 'text-yellow-500' : 'text-gray-400' }}">
                     Home
                 </a>
-                <a href="{{ route('pelanggan.order') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pelanggan.order') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
+                <a href="{{ route('pelanggan.order') }}"
+                    class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pelanggan.order') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                     Order
                 </a>
-                <a href="{{ route('pelanggan.transaction') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pelanggan.transaction') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
+                <a href="{{ route('pelanggan.transaction') }}"
+                    class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pelanggan.transaction') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
                     Transaction
                 </a>
                 <form method="POST" action="{{ route('pelanggan.signout') }}">
@@ -76,6 +68,16 @@
                     class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
                     title="Home">
                     <svg class="w-7 h-7 {{ request()->routeIs('admin.dashboard') ? 'text-yellow-500' : 'text-gray-400' }}"
+                        fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                    </svg>
+                </a>
+
+                <!-- Orders (pegawai dashboard) -->
+                <a href="{{ route('pegawai.dashboard') }}"
+                    class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
+                    title="Orders">
+                    <svg class="w-7 h-7 {{ request()->routeIs('pegawai.dashboard') ? 'text-yellow-500' : 'text-gray-400' }}"
                         fill="currentColor" viewBox="0 0 24 24">
                         <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                     </svg>
@@ -126,36 +128,10 @@
             @endif
         @endauth
 
-        {{-- ================= PEGAWAI ================= --}}
-        @auth
-            @if (auth()->user()->role === 'pegawai')
-                <!-- Home -->
-                <a href="{{ route('pegawai.dashboard') }}"
-                    class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition">
-                    <svg class="w-7 h-7
-        {{ request()->routeIs('pegawai.dashboard') ? 'text-yellow-500' : 'text-gray-400' }}"
-                        fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                    </svg>
-                </a>
-
-                <!-- Logout -->
-                <form action="{{ route('logout') }}" method="POST" class="flex">
-                    @csrf
-                    <button type="submit"
-                        class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300 text-red-600 hover:text-red-700"
-                        title="Logout">
-                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
-                        </svg>
-                    </button>
-                </form>
-            @endif
-        @endauth
+        {{-- removed separate pegawai block (features merged into admin menu) --}}
 
         {{-- ================= PELANGGAN / GUEST ================= --}}
-            @guest
+        @guest
             <!-- Home -->
             <a href="{{ route('pelanggan.home') }}"
                 class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"

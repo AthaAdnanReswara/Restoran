@@ -16,17 +16,17 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return $next($request);
-        if(Auth::check()) {
+        if (Auth::check()) {
             $user = Auth::user();
 
-            if($user->role === 'admin') {
+            if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
-            }elseif($user->role === 'pegawai'){
-                return redirect()->route('pegawai.dashboard');
-            }else{
-                return redirect()->route('login');
             }
+
+            // default redirect for any authenticated user
+            return redirect()->route('admin.dashboard');
         }
+
+        return $next($request);
     }
 }

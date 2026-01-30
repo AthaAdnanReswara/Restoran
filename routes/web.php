@@ -28,8 +28,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::resource('table', TabelController::class);
 });
 
-// Prefix Pegawai
-Route::prefix('pegawai')->name('pegawai.')->middleware(['auth', 'role:pegawai'])->group(function () {
+// Prefix Pegawai (now accessible to admin)
+Route::prefix('pegawai')->name('pegawai.')->middleware(['auth', 'role:admin'])->group(function () {
     //Dashboard Pegawai
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // Staff order endpoints (AJAX)

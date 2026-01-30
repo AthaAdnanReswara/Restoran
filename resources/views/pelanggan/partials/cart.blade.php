@@ -35,7 +35,11 @@
             <div class="flex items-start justify-between gap-4">
                 <div class="truncate">
                     <h3 class="font-semibold text-gray-800 truncate">{{ $item->menu->name }}</h3>
-                    <p class="text-xs text-gray-500 mt-1">Rp {{ number_format($item->menu->price, 0, ',', '.') }} / pcs</p>
+                    @if ($item->notes)
+                        <p class="text-sm text-gray-600 mt-1">Catatan: {{ $item->notes }}</p>
+                    @endif
+                    <p class="text-xs text-gray-500 mt-1">Rp {{ number_format($item->menu->price, 0, ',', '.') }} / pcs
+                    </p>
                 </div>
 
                 <div class="text-right">

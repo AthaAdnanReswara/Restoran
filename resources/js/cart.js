@@ -5,24 +5,27 @@ const csrf = document
 /**
  * TAMBAH ITEM (draft di DB)
  */
-function addToCart(menuId) {
+function addToCart(menuId, notes = null) {
+    const payload = { menu_id: menuId };
+    if (notes) payload.notes = notes;
+
     fetch("/order/add", {
         method: "POST",
         headers: {
             "X-CSRF-TOKEN": csrf,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ menu_id: menuId }),
+        body: JSON.stringify(payload),
     })
         .then(async (res) => {
             const text = await res.text();
-            console.log('addToCart response status:', res.status);
-            console.log('addToCart response text:', text);
+            console.log("addToCart response status:", res.status);
+            console.log("addToCart response text:", text);
 
             if (!res.ok) {
                 let message = text || `HTTP ${res.status}`;
                 try {
-                    const json = JSON.parse(text || '{}');
+                    const json = JSON.parse(text || "{}");
                     message = json.message || json.error || message;
                 } catch (e) {
                     // not JSON
@@ -35,7 +38,7 @@ function addToCart(menuId) {
                 try {
                     return JSON.parse(text);
                 } catch (e) {
-                    console.warn('addToCart: response is not valid JSON');
+                    console.warn("addToCart: response is not valid JSON");
                     return null;
                 }
             }
@@ -48,27 +51,27 @@ function addToCart(menuId) {
             if (window.Swal) {
                 Swal.fire({
                     toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Ditambahkan ke keranjang',
+                    position: "top-end",
+                    icon: "success",
+                    title: "Ditambahkan ke keranjang",
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 2000,
                 });
             }
         })
         .catch((err) => {
-            console.error('addToCart error:', err);
+            console.error("addToCart error:", err);
             if (window.Swal) {
                 Swal.fire({
                     toast: true,
-                    position: 'top-end',
-                    icon: 'error',
-                    title: err.message || 'Gagal menambahkan ke cart',
+                    position: "top-end",
+                    icon: "error",
+                    title: err.message || "Gagal menambahkan ke cart",
                     showConfirmButton: false,
-                    timer: 3000
+                    timer: 3000,
                 });
             } else {
-                alert(err.message || 'Gagal menambahkan ke cart');
+                alert(err.message || "Gagal menambahkan ke cart");
             }
         });
 }
@@ -119,7 +122,9 @@ function refreshCart() {
             }
 
             // update order modal summary if server returned it
-            const modalContainer = document.getElementById('orderSummaryContainer');
+            const modalContainer = document.getElementById(
+                "orderSummaryContainer",
+            );
             if (modalContainer && data.modalHtml !== undefined) {
                 modalContainer.innerHTML = data.modalHtml;
             }
@@ -135,22 +140,28 @@ function refreshCart() {
             if (orderBtn) {
                 if (data.count && data.count > 0) {
                     orderBtn.disabled = false;
-                    orderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    orderBtn.classList.remove(
+                        "opacity-50",
+                        "cursor-not-allowed",
+                    );
                 } else {
                     orderBtn.disabled = true;
-                    orderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    orderBtn.classList.add("opacity-50", "cursor-not-allowed");
                 }
             }
         })
-        .catch((err) => console.error('refreshCart error', err));
+        .catch((err) => console.error("refreshCart error", err));
 }
 
 function formatCurrency(value) {
     // assume integer/decimal number
     try {
-        return 'Rp ' + Number(value).toLocaleString('id-ID', { maximumFractionDigits: 0 });
+        return (
+            "Rp " +
+            Number(value).toLocaleString("id-ID", { maximumFractionDigits: 0 })
+        );
     } catch (e) {
-        return 'Rp000';
+        return "Rp000";
     }
 }
 
@@ -167,7 +178,23 @@ export function initCart() {
     // attach listeners to add-to-cart buttons if present
     document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
-            addToCart(btn.dataset.menu);
+            const menuId = btn.dataset.menu;
+            // ask for optional notes using SweetAlert2 if available
+            if (window.Swal) {
+                Swal.fire({
+                    title: "Tambahkan catatan (opsional)",
+                    input: "text",
+                    inputPlaceholder: "Contoh: pedas, manis, tanpa gula",
+                    showCancelButton: true,
+                    confirmButtonText: "Tambah",
+                    cancelButtonText: "Tambahkan tanpa catatan",
+                }).then((result) => {
+                    const notes = result.value || null;
+                    addToCart(menuId, notes);
+                });
+            } else {
+                addToCart(menuId, null);
+            }
         });
     });
 

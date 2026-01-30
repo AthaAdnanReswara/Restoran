@@ -54,12 +54,15 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
+        // if route belongs to pegawai area, show pegawai index (now accessible to admin)
+        if (request()->routeIs('pegawai.*')) {
+            return view('pegawai.index', compact('user'));
+        }
+
         if ($user->role === 'admin') {
             return view('admin.dashboard', compact('labels', 'data', 'totalOrders', 'ordersToday', 'drinksCount', 'snackCount', 'recentOrders', 'transactionsList'));
-        } elseif ($user->role === 'pegawai') {
-            return view('pegawai.index', compact('user'));
-        } else {
-            abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk membuka halaman ini .');
         }
+
+        abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk membuka halaman ini .');
     }
 }

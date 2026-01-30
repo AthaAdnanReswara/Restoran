@@ -140,6 +140,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'menu_id' => 'required|exists:menus,id',
+            'notes' => 'nullable|string|max:255',
         ]);
 
         $customerName = session('customer_name');
@@ -154,11 +155,19 @@ class OrderController extends Controller
 
         $menu = Menu::findOrFail($request->menu_id);
 
-        $trx = Transaction::where('menu_id', $menu->id)
+        // try to find existing draft item with same menu and same notes (or both null)
+        $trxQuery = Transaction::where('menu_id', $menu->id)
             ->where('guest_token', $guestToken)
             ->where('table_id', $tableId)
-            ->where('status', 'draft')
-            ->first();
+            ->where('status', 'draft');
+
+        if ($request->filled('notes')) {
+            $trxQuery->where('notes', $request->notes);
+        } else {
+            $trxQuery->whereNull('notes');
+        }
+
+        $trx = $trxQuery->first();
 
         if ($trx) {
             $trx->increment('quantity');
@@ -174,6 +183,7 @@ class OrderController extends Controller
                 'quantity' => 1,
                 'total_price' => $menu->price,
                 'status' => 'draft',
+                'notes' => $request->notes ?? null,
             ]);
         }
 

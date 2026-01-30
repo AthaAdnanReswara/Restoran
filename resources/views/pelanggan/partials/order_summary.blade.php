@@ -10,6 +10,9 @@
             <div class="flex justify-between items-center py-2 border-b">
                 <div>
                     <p class="font-semibold">{{ $item->menu->name }}</p>
+                    @if ($item->notes)
+                        <p class="text-sm text-gray-600">Catatan: {{ $item->notes }}</p>
+                    @endif
                     <p class="text-sm text-gray-600">Qty: {{ $item->quantity }}</p>
                 </div>
                 <p class="font-semibold">

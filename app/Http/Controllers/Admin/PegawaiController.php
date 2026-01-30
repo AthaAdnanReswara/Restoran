@@ -11,8 +11,9 @@ class PegawaiController extends Controller
 {
     public function index()
     {
-        $pegawais = User::where('role', 'pegawai')->latest()->get();
-        return view('admin.pegawai.index', compact('pegawais'), );
+        // show users that previously were 'pegawai' — now use 'admin' role for staff
+        $pegawais = User::where('role', 'admin')->latest()->get();
+        return view('admin.pegawai.index', compact('pegawais'),);
     }
 
     /**
@@ -38,7 +39,7 @@ class PegawaiController extends Controller
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'pegawai',
+            'role'     => 'admin',
         ]);
 
         return redirect()->route('admin.pegawai.index')

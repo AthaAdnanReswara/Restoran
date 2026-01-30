@@ -14,13 +14,13 @@ class PegawaiSeeder extends Seeder
      */
     public function run(): void
     {
-        //cek apakah Pegawai sudah ada
-        if (!User::where('role', 'pegawai')->exists()) {
+        // create a staff account if email not already used (role set to admin)
+        if (!User::where('email', 'pegawai@gmail.com')->exists()) {
             User::create([
                 'name' => 'pegawai',
                 'email' => 'pegawai@gmail.com',
                 'password' => Hash::make('123'),
-                'role' => 'pegawai',
+                'role' => 'admin',
             ]);
         }
     }
