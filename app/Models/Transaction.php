@@ -18,6 +18,7 @@ class Transaction extends Model
         'guest_token',
         'quantity',
         'customer_name',
+        'price',
         'payment_method',
         'total_price',
         'status',

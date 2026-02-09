@@ -181,6 +181,7 @@ class OrderController extends Controller
                 'guest_token' => $guestToken,
                 'customer_name' => $customerName,
                 'quantity' => 1,
+                'price' => $menu->price,
                 'total_price' => $menu->price,
                 'status' => 'draft',
                 'notes' => $request->notes ?? null,
