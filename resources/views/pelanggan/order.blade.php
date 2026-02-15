@@ -14,9 +14,10 @@
 
         <div class="mt-8 mx-4 relative bg-white rounded-xl border border-gray-200 p-6">
             <div class="flex justify-between items-center mb-6">
-                    <div class="mt-5">
+                <div class="mt-5">
                     <p class="text-gray-600 text-sm">Total Amount</p>
-                    <p id="cartTotal" class="text-3xl font-bold text-gray-900">Rp {{ number_format($cartItems->sum('total_price'), 0, ',', '.') }}</p>
+                    <p id="cartTotal" class="text-3xl font-bold text-gray-900">Rp
+                        {{ number_format($cartItems->sum('total_price'), 0, ',', '.') }}</p>
                 </div>
                 <button id="promoBtn"
                     class="px-5 py-2 absolute top-5 right-5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition font-medium text-sm cursor-pointer">
@@ -98,7 +99,7 @@
                     </div>
 
                     <!-- Payment Method -->
-                    <form method="POST" action="{{ route('pelanggan.order.confirm') }}" class="space-y-4">
+                    <form id="orderForm" method="POST" action="{{ route('pelanggan.order.confirm') }}" class="space-y-4">
                         @csrf
 
                         <div>
@@ -252,7 +253,7 @@
     </script>
     <script>
         // Auto sign-out pelanggan after 5 minutes (300000 ms) of inactivity
-        (function(){
+        (function() {
             const SIGNOUT_TIMEOUT = 5 * 60 * 1000; // 5 minutes
             let timer = null;
 
@@ -264,12 +265,22 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
                         },
-                        body: JSON.stringify({ auto: true })
+                        body: JSON.stringify({
+                            auto: true
+                        })
                     }).then(() => {
                         if (window.Swal) {
-                            Swal.fire({toast:true, position:'top-end', icon:'info', title:'Sesi berakhir (otomatis), Anda telah keluar', showConfirmButton:false, timer:2500});
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'info',
+                                title: 'Sesi berakhir (otomatis), Anda telah keluar',
+                                showConfirmButton: false,
+                                timer: 2500
+                            });
                         }
                         setTimeout(() => location.reload(), 800);
                     }).catch(() => location.reload());
@@ -277,8 +288,10 @@
             };
 
             // reset on common interactions
-            ['click','keydown','mousemove','touchstart'].forEach(evt => {
-                document.addEventListener(evt, resetTimer, { passive: true });
+            ['click', 'keydown', 'mousemove', 'touchstart'].forEach(evt => {
+                document.addEventListener(evt, resetTimer, {
+                    passive: true
+                });
             });
 
             // start timer
@@ -287,10 +300,14 @@
     </script>
     <script>
         // polling order history for realtime status updates
-        (function(){
+        (function() {
             let prevHtml = '';
             const fetchStatus = () => {
-                fetch("{{ route('pelanggan.order.status') }}", { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+                fetch("{{ route('pelanggan.order.status') }}", {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
                     .then(res => res.json())
                     .then(data => {
                         const container = document.getElementById('orderHistoryContainer');
@@ -298,7 +315,14 @@
                         if (data.html !== undefined) {
                             if (prevHtml && prevHtml !== data.html) {
                                 if (window.Swal) {
-                                    Swal.fire({toast:true, position:'top-end', icon:'info', title:'Status pesanan diperbarui', showConfirmButton:false, timer:2500});
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'info',
+                                        title: 'Status pesanan diperbarui',
+                                        showConfirmButton: false,
+                                        timer: 2500
+                                    });
                                 }
                             }
                             container.innerHTML = data.html;

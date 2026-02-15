@@ -46,15 +46,17 @@
             <div class="bg-white rounded-lg shadow p-4">
                 <h2 class="text-lg font-semibold mb-4">🧾 Pesanan Terbaru</h2>
                 <div class="space-y-3 text-sm">
-                    @forelse($recentOrders as $r)
+                    @forelse($recentGroups as $groupKey => $items)
+                        @php $first = $items->first(); @endphp
                         <div class="flex justify-between items-start border-b pb-2">
                             <div>
-                                <p class="font-semibold">Meja {{ $r->table_id }}</p>
-                                <p class="text-gray-500">{{ $r->menu->name ?? '-' }} &middot; x{{ $r->quantity }}</p>
-                                <p class="text-xs text-gray-400">{{ $r->created_at->diffForHumans() ?? '' }}</p>
+                                <p class="font-semibold">Meja {{ $first->table_id }}</p>
+                                <p class="text-gray-500">{{ $items->pluck('menu.name')->unique()->join(', ') ?? '-' }}</p>
+                                <p class="text-xs text-gray-400">{{ $first->created_at->diffForHumans() ?? '' }}</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-semibold text-green-600">Rp {{ number_format($r->total_price, 0, ',', '.') }}
+                                <p class="font-semibold text-green-600">Rp
+                                    {{ number_format($items->sum('total_price'), 0, ',', '.') }}
                                 </p>
                             </div>
                         </div>
@@ -65,58 +67,106 @@
             </div>
         </div>
 
-        {{-- Tabel transaksi (ringkas dan rapi) --}}
+        {{-- Recent grouped orders (latest 5) --}}
         <div class="bg-white rounded-lg shadow p-4 sm:p-6">
-            <h2 class="text-base font-semibold mb-4">📋 Daftar Transaksi</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead>
-                        <tr class="border-b text-gray-600">
-                            <th class="py-3 px-2 text-left">#</th>
-                            <th class="py-3 px-2 text-left">Meja</th>
-                            <th class="py-3 px-2 text-left">Menu</th>
-                            <th class="py-3 px-2 text-left">Qty</th>
-                            <th class="py-3 px-2 text-left">Total</th>
-                            <th class="py-3 px-2 text-left">Status</th>
-                            <th class="py-3 px-2 text-left">Waktu</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transactionsList as $i => $t)
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-3 px-2">{{ $i + 1 }}</td>
-                                <td class="py-3 px-2">Meja {{ $t->table_id }}</td>
-                                <td class="py-3 px-2">{{ $t->menu->name ?? '-' }}</td>
-                                <td class="py-3 px-2">{{ $t->quantity }}</td>
-                                <td class="py-3 px-2">Rp {{ number_format($t->total_price, 0, ',', '.') }}</td>
-                                <td class="py-3 px-2">
-                                    @php
-                                        $status = $t->status ?? '';
-                                        $badge = 'bg-gray-100 text-gray-700';
-                                        if ($status === 'completed') {
-                                            $badge = 'bg-green-100 text-green-600';
-                                        }
-                                        if ($status === 'accepted') {
-                                            $badge = 'bg-yellow-100 text-yellow-600';
-                                        }
-                                        if ($status === 'cancelled') {
-                                            $badge = 'bg-red-100 text-red-600';
-                                        }
-                                    @endphp
-                                    <span
-                                        class="px-3 py-1 text-xs rounded-full {{ $badge }}">{{ ucfirst($status) }}</span>
-                                </td>
-                                <td class="py-3 px-2 text-xs text-gray-500">
-                                    {{ optional($t->created_at)->format('d M H:i') }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="py-4 text-center text-gray-500">Belum ada transaksi</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <h2 class="text-base font-semibold mb-4">📋 Pesanan Terbaru (5 terakhir)</h2>
+
+            @if ($recentGroups->isEmpty())
+                <div class="py-6 text-center text-gray-500">Belum ada pesanan</div>
+            @else
+                <div class="space-y-4">
+                    @foreach ($recentGroups as $orderTime => $items)
+                        @php
+                            $first = $items->first();
+                            $orderStatus = $items->contains('status', 'accepted')
+                                ? 'accepted'
+                                : ($items->contains('status', 'ordered')
+                                    ? 'ordered'
+                                    : $items->pluck('status')->first());
+                        @endphp
+
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <div class="text-sm text-gray-500">Customer</div>
+                                    <div class="font-semibold">{{ $first->customer_name ?? '-' }}</div>
+                                    <div class="text-xs text-gray-500">Meja: {{ $first->table_id }}</div>
+                                </div>
+
+                                <div class="text-right">
+                                    <div class="text-xs text-gray-500">Dipesan</div>
+                                    <div class="font-medium">{{ $items->first()->created_at->format('d M Y H:i') }}
+                                    </div>
+                                    <div class="text-xs text-gray-500 mt-1">Payment: {{ $first->payment_method ?? '-' }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t pt-3">
+                                <ul class="space-y-2 text-sm">
+                                    @foreach ($items as $it)
+                                        <li class="flex justify-between">
+                                            <div>
+                                                <div class="font-medium">{{ $it->menu->name ?? '-' }} <span
+                                                        class="text-xs text-gray-500">x{{ $it->quantity }}</span></div>
+                                                @if ($it->notes)
+                                                    <div class="text-xs text-gray-500">Catatan: {{ $it->notes }}</div>
+                                                @endif
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-semibold">Rp
+                                                    {{ number_format($it->total_price, 0, ',', '.') }}</div>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                                <div class="mt-3 flex items-center justify-between">
+                                    <div class="text-sm text-gray-600">Total: <span class="font-semibold text-yellow-500">Rp
+                                            {{ number_format($items->sum('total_price'), 0, ',', '.') }}</span></div>
+
+                                    <div class="flex items-center gap-3">
+                                        @php
+                                            $badgeClass = 'bg-gray-100 text-gray-700';
+                                            if ($orderStatus === 'completed') {
+                                                $badgeClass = 'bg-green-100 text-green-600';
+                                            }
+                                            if ($orderStatus === 'accepted') {
+                                                $badgeClass = 'bg-yellow-100 text-yellow-600';
+                                            }
+                                            if ($orderStatus === 'cancelled') {
+                                                $badgeClass = 'bg-red-100 text-red-600';
+                                            }
+                                        @endphp
+                                        <span
+                                            class="px-3 py-1 text-xs rounded-full {{ $badgeClass }}">{{ ucfirst($orderStatus) }}</span>
+
+                                        {{-- print button removed from admin dashboard; printing handled in Pegawai orders page --}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Hidden printable content for this order --}}
+                            <div class="print-content hidden">
+                                <h2>Struk Pesanan</h2>
+                                <div>Order: {{ $items->first()->created_at->format('d M Y H:i') }}</div>
+                                <div>Meja: {{ $first->table_id }}</div>
+                                <div>Customer: {{ $first->customer_name }}</div>
+                                <hr />
+                                @foreach ($items as $it)
+                                    <div>{{ $it->menu->name }} x{{ $it->quantity }} - Rp
+                                        {{ number_format($it->total_price, 0, ',', '.') }}</div>
+                                    @if ($it->notes)
+                                        <div>Catatan: {{ $it->notes }}</div>
+                                    @endif
+                                @endforeach
+                                <hr />
+                                <div>Total: Rp {{ number_format($items->sum('total_price'), 0, ',', '.') }}</div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
     </div>
@@ -147,5 +197,37 @@
                 }
             });
         }
+    </script>
+    <script>
+        // print order handler: open a new window with printable content
+        (function() {
+            document.querySelectorAll('.print-order-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const orderCard = btn.closest('div.border.rounded-lg');
+                    if (!orderCard) return;
+                    const printable = orderCard.querySelector('.print-content');
+                    if (!printable) return;
+
+                    const w = window.open('', '_blank');
+                    const html = `
+                        <html>
+                        <head>
+                        <title>Struk Pesanan</title>
+                        <style>body{font-family: Arial, Helvetica, sans-serif; padding:20px}</style>
+                        </head>
+                        <body>${printable.innerHTML}</body>
+                        </html>
+                    `;
+                    w.document.open();
+                    w.document.write(html);
+                    w.document.close();
+                    w.focus();
+                    // small delay to allow resources to render
+                    setTimeout(() => {
+                        w.print();
+                    }, 300);
+                });
+            });
+        })();
     </script>
 @endsection

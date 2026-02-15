@@ -54,13 +54,23 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
+        // Group transactions by guest_token when available (so items from same customer/session
+        // are combined), otherwise fallback to created_at minute to group near-simultaneous items.
+        $groupedOrders = Transaction::with('menu')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(fn($item) => $item->guest_token ?: $item->created_at->format('Y-m-d H:i'));
+
+        // Recent grouped orders (max 5 groups)
+        $recentGroups = $groupedOrders->take(5);
+
         // if route belongs to pegawai area, show pegawai index (now accessible to admin)
         if (request()->routeIs('pegawai.*')) {
             return view('pegawai.index', compact('user'));
         }
 
         if ($user->role === 'admin') {
-            return view('admin.dashboard', compact('labels', 'data', 'totalOrders', 'ordersToday', 'drinksCount', 'snackCount', 'recentOrders', 'transactionsList'));
+            return view('admin.dashboard', compact('labels', 'data', 'totalOrders', 'ordersToday', 'drinksCount', 'snackCount', 'recentGroups', 'transactionsList', 'groupedOrders'));
         }
 
         abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk membuka halaman ini .');

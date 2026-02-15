@@ -17,7 +17,7 @@
 
                 <div class="text-right">
                     <div class="text-xs text-gray-500">Ordered at</div>
-                    <div class="text-sm text-gray-700">{{ \Carbon\Carbon::parse($orderTime)->format('d M Y H:i') }}
+                    <div class="text-sm text-gray-700">{{ $items->first()->created_at->format('d M Y H:i') }}
                     </div>
                     <div class="mt-1 text-xs text-gray-500">Payment: <span
                             class="font-medium text-gray-700">{{ $items->first()->payment_method ?? '-' }}</span></div>
@@ -42,19 +42,23 @@
                                     <div class="font-medium text-gray-800">{{ $item->menu->name }}</div>
                                     <div class="text-xs text-gray-500">Rp
                                         {{ number_format($item->menu->price, 0, ',', '.') }} each</div>
+                                    @if ($item->notes)
+                                        <div class="text-xs text-gray-500 mt-1">Catatan: {{ $item->notes }}</div>
+                                    @endif
                                 </div>
                             </div>
 
                             <div class="text-right">
                                 <div class="text-sm font-semibold text-gray-800">x{{ $item->quantity }}</div>
-                                <div class="text-xs text-gray-500">Rp {{ number_format($item->total_price, 0, ',', '.') }}
+                                <div class="text-xs text-gray-500">Rp
+                                    {{ number_format($item->total_price, 0, ',', '.') }}
                                 </div>
                             </div>
                         </li>
                     @endforeach
                 </ul>
 
-                <div class="mt-4 pt-3 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="mt-4 pt-3 border-t space-y-3">
                     <div class="text-sm text-gray-600">
                         <div>Total items: <span class="font-medium text-gray-800">{{ $items->sum('quantity') }}</span>
                         </div>
@@ -62,7 +66,7 @@
                                 {{ number_format($items->sum('total_price'), 0, ',', '.') }}</span></div>
                     </div>
 
-                    <div class="flex gap-3 w-full sm:w-auto">
+                    <div class="flex gap-3 w-full sm:w-auto items-center justify-center">
                         @foreach ($items as $item)
                             <input type="hidden" class="trx-id" value="{{ $item->id }}">
                         @endforeach
@@ -74,16 +78,38 @@
 
                         @if ($hasOrdered)
                             <button data-order="{{ $orderTime }}"
-                                class="reject-btn flex-1 sm:flex-initial px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition">Reject</button>
+                                class="reject-btn px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition">Reject</button>
                             <button data-order="{{ $orderTime }}"
-                                class="accept-btn flex-1 sm:flex-initial px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition">Accept</button>
+                                class="accept-btn px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition">Accept</button>
                         @elseif($hasAccepted)
                             <button data-order="{{ $orderTime }}"
-                                class="complete-btn w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition">Completed</button>
+                                class="complete-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition">Completed</button>
+                            <!-- Print button shown only when order has been accepted -->
+                            <button type="button"
+                                class="print-order-btn px-3 py-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-xl text-sm">Print</button>
                         @endif
+
                     </div>
                 </div>
             </div>
+        </div>
+
+        {{-- Hidden printable content for this order --}}
+        <div class="print-content hidden">
+            <h2 class="text-lg font-bold">Struk Pesanan</h2>
+            <div>Order: {{ $items->first()->created_at->format('d M Y H:i') }}</div>
+            <div>Meja: {{ $items->first()->table_id }}</div>
+            <div>Customer: {{ $items->first()->customer_name }}</div>
+            <hr />
+            @foreach ($items as $it)
+                <div>{{ $it->menu->name }} x{{ $it->quantity }} - Rp
+                    {{ number_format($it->total_price, 0, ',', '.') }}</div>
+                @if ($it->notes)
+                    <div>Catatan: {{ $it->notes }}</div>
+                @endif
+            @endforeach
+            <hr />
+            <div>Total: Rp {{ number_format($items->sum('total_price'), 0, ',', '.') }}</div>
         </div>
     </div>
 @endforeach

@@ -119,6 +119,8 @@ function refreshCart() {
         .then((data) => {
             if (data.html !== undefined) {
                 cartEl.innerHTML = data.html;
+                // bind note textareas for newly injected cart HTML
+                bindNoteHandlers();
             }
 
             // update order modal summary if server returned it
@@ -153,6 +155,34 @@ function refreshCart() {
         .catch((err) => console.error("refreshCart error", err));
 }
 
+function updateNote(transactionId, notes) {
+    fetch("/order/notes", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": csrf,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transaction_id: transactionId, notes }),
+    })
+        .then((res) => {
+            if (!res.ok) throw new Error("Failed to save note");
+            return res.json();
+        })
+        .then(() => refreshCart())
+        .catch((err) => console.error("updateNote err", err));
+}
+
+function bindNoteHandlers() {
+    document.querySelectorAll(".cart-note").forEach((el) => {
+        // avoid duplicate listeners
+        el.onchange = null;
+        el.addEventListener("change", (e) => {
+            const id = el.dataset.trx;
+            updateNote(id, el.value.trim() || null);
+        });
+    });
+}
+
 function formatCurrency(value) {
     // assume integer/decimal number
     try {
@@ -175,26 +205,11 @@ export function initCart() {
     window.removeFromCart = removeFromCart;
     window.refreshCart = refreshCart;
 
-    // attach listeners to add-to-cart buttons if present
+    // attach listeners to add-to-cart buttons if present (no per-item note here)
     document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
             const menuId = btn.dataset.menu;
-            // ask for optional notes using SweetAlert2 if available
-            if (window.Swal) {
-                Swal.fire({
-                    title: "Tambahkan catatan (opsional)",
-                    input: "text",
-                    inputPlaceholder: "Contoh: pedas, manis, tanpa gula",
-                    showCancelButton: true,
-                    confirmButtonText: "Tambah",
-                    cancelButtonText: "Tambahkan tanpa catatan",
-                }).then((result) => {
-                    const notes = result.value || null;
-                    addToCart(menuId, notes);
-                });
-            } else {
-                addToCart(menuId, null);
-            }
+            addToCart(menuId);
         });
     });
 
@@ -206,4 +221,7 @@ export function initCart() {
             orderModal.classList.remove("hidden");
         });
     }
+
+    // bind any note textareas already present on initial load
+    bindNoteHandlers();
 }
