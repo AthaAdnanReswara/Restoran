@@ -136,6 +136,30 @@ class OrderController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Update per-transaction notes (from cart textarea)
+     */
+    public function updateNotes(Request $request)
+    {
+        $request->validate([
+            'transaction_id' => 'required|exists:transactions,id',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        $trx = Transaction::findOrFail($request->transaction_id);
+
+        // only allow editing notes for draft items (before order submitted)
+        if ($trx->status !== 'draft') {
+            return response()->json(['success' => false, 'message' => 'Cannot edit notes after order submitted'], 422);
+        }
+
+        $trx->update([
+            'notes' => $request->notes ?? null,
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
     public function addToCart(Request $request)
     {
         $request->validate([

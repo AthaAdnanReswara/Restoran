@@ -35,9 +35,6 @@
             <div class="flex items-start justify-between gap-4">
                 <div class="truncate">
                     <h3 class="font-semibold text-gray-800 truncate">{{ $item->menu->name }}</h3>
-                    @if ($item->notes)
-                        <p class="text-sm text-gray-600 mt-1">Catatan: {{ $item->notes }}</p>
-                    @endif
                     <p class="text-xs text-gray-500 mt-1">Rp {{ number_format($item->menu->price, 0, ',', '.') }} / pcs
                     </p>
                 </div>
@@ -48,6 +45,15 @@
                     <button onclick="removeFromCart({{ $item->id }})"
                         class="text-xs text-red-500 hover:text-red-600 mt-1">Hapus</button>
                 </div>
+            </div>
+
+            {{-- Per-order note (editable) --}}
+            <div class="mt-2">
+                <label for="note-{{ $item->id }}" class="sr-only">Catatan untuk
+                    {{ $item->menu->name }}</label>
+                <textarea id="note-{{ $item->id }}" data-trx="{{ $item->id }}"
+                    class="cart-note w-full rounded-md border border-gray-200 p-2 text-sm" rows="2"
+                    placeholder="Tambahkan catatan">{{ $item->notes }}</textarea>
             </div>
 
             <div class="mt-3 flex items-center gap-2">

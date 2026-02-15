@@ -57,6 +57,7 @@ Route::prefix('/')
             ->name('set.customer');
 
         Route::post('/order/qty', [OrderController::class, 'updateQty'])->name('order.qty');
+        Route::post('/order/notes', [OrderController::class, 'updateNotes'])->name('order.notes');
         Route::post('/order/add', [OrderController::class, 'addToCart'])->name('order.add');
         Route::get('/order/cart', [OrderController::class, 'cart'])
             ->name('order.cart');

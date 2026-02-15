@@ -16,7 +16,7 @@ class OrderController extends Controller
             ->whereIn('status', ['ordered', 'accepted'])
             ->orderBy('created_at', 'asc')
             ->get()
-            ->groupBy(fn($item) => $item->created_at->format('Y-m-d H:i'));
+            ->groupBy(fn($item) => $item->guest_token ?: $item->created_at->format('Y-m-d H:i'));
 
         $html = view('pegawai.partials.orders', compact('orders'))->render();
 
