@@ -22,6 +22,10 @@
                     <a href="{{ route('admin.table.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
                         Table
                     </a>
+                    <a href="{{ route('admin.penghasilan.index') }}"
+                        class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('admin.penghasilan.*') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
+                        Penghasilan
+                    </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit"
@@ -73,24 +77,13 @@
                     </svg>
                 </a>
 
-                <!-- Orders (pegawai dashboard) -->
+                <!-- Orders -->
                 <a href="{{ route('pegawai.dashboard') }}"
                     class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
                     title="Orders">
                     <svg class="w-7 h-7 {{ request()->routeIs('pegawai.dashboard') ? 'text-yellow-500' : 'text-gray-400' }}"
                         fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                    </svg>
-                </a>
-
-                <!-- Pegawai -->
-                <a href="{{ route('admin.pegawai.index') }}"
-                    class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
-                    title="Pegawai">
-                    <svg class="w-7 h-7 {{ request()->routeIs('admin.pegawai.*') ? 'text-yellow-500' : 'text-gray-400' }}"
-                        fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        <path d="M7 4h10l1 2h2v2H4V6h2l1-2zm-1 6h12v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-8z" />
                     </svg>
                 </a>
 
@@ -100,16 +93,26 @@
                     title="Menu">
                     <svg class="w-7 h-7 {{ request()->routeIs('admin.menu.*') ? 'text-yellow-500' : 'text-gray-400' }}"
                         fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" />
                     </svg>
                 </a>
+
                 <!-- Table -->
                 <a href="{{ route('admin.table.index') }}"
                     class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
-                    title="Menu">
+                    title="Table">
                     <svg class="w-7 h-7 {{ request()->routeIs('admin.table.*') ? 'text-yellow-500' : 'text-gray-400' }}"
                         fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        <path d="M3 5h18v14H3V5zm2 2v3h5V7H5zm7 0v3h7V7h-7zM5 12v5h5v-5H5zm7 0v5h7v-5h-7z" />
+                    </svg>
+                </a>
+                <a href="{{ route('admin.penghasilan.index') }}"
+                    class="nav-link-mobile flex flex-col items-center justify-center py-3 rounded-lg transition duration-300"
+                    title="Penghasilan">
+                    <svg class="w-7 h-7 {{ request()->routeIs('admin.penghasilan.*') ? 'text-yellow-500' : 'text-gray-400' }}"
+                        fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15.93V19h-2v-1.07A4.002 4.002 0 018 14h2a2 2 0 104 0c0-1.1-.9-2-2-2a4 4 0 110-8V3h2v1.07A4.002 4.002 0 0116 8h-2a2 2 0 10-4 0c0 1.1.9 2 2 2a4 4 0 110 8z" />
                     </svg>
                 </a>
 
