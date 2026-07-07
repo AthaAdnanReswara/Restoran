@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\laporan;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PegawaiController;
 use App\Http\Controllers\Admin\TabelController;
@@ -26,6 +27,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::resource('pegawai', PegawaiController::class);
     //Tabel Resource
     Route::resource('table', TabelController::class);
+    //penghasilan laporan
+    Route::get('penghasilan', [laporan::class, 'index'])->name('penghasilan.index');
+    //print laporan
+    Route::get('penghasilan/print', [laporan::class, 'print'])->name('penghasilan.print');
 });
 
 // Prefix Pegawai (now accessible to admin)
