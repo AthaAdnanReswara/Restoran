@@ -10,7 +10,7 @@
             <div class="flex justify-center mb-6">
                 <div class="w-56 h-56 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
                     @if (file_exists(public_path('images/qris.jpeg')))
-                        <img src="{{ asset('images/qris.jpeg') }}" alt="QRIS"
+                        <img src="{{ asset('images/q.jpeg') }}" alt="QRIS"
                             class="w-full h-full object-contain rounded-lg">
                     @else
                         <span class="text-center">

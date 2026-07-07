@@ -12,7 +12,7 @@
                     </a>
                     <a href="{{ route('pegawai.dashboard') }}"
                         class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pegawai.dashboard') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
-                        Orders
+                        Pesanan
                     </a>
 
                     <a href="{{ route('admin.menu.index') }}"
@@ -20,7 +20,7 @@
                         Menu
                     </a>
                     <a href="{{ route('admin.table.index') }}" class="nav-link py-2 px-4 transition hover:bg-gray-100">
-                        Table
+                        Meja
                     </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
@@ -40,11 +40,11 @@
                 </a>
                 <a href="{{ route('pelanggan.order') }}"
                     class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pelanggan.order') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
-                    Order
+                    Pesanan
                 </a>
                 <a href="{{ route('pelanggan.transaction') }}"
                     class="nav-link py-2 px-4 transition hover:bg-gray-100 {{ request()->routeIs('pelanggan.transaction') ? 'text-yellow-500 font-semibold' : 'text-gray-700' }}">
-                    Transaction
+                    Transaksi
                 </a>
                 <form method="POST" action="{{ route('pelanggan.signout') }}">
                     @csrf

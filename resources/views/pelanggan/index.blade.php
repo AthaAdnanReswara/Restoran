@@ -4,7 +4,7 @@
     <section id="header">
         <div class="info mt-2 flex justify-between shadow-lg p-8 rounded-2xl bg-white">
             <h3>Name: {{ session('customer_name') }}</h3>
-            <h3>No Table: {{ session('table_id') }}</h3>
+            <h3>No Meja: {{ session('table_id') }}</h3>
         </div>
     </section>
 
@@ -33,19 +33,19 @@
                 <button class="active bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-md text-sm md:text-base"
                     data-filter="all">All</button>
                 <button class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
-                    data-filter="food">Food</button>
+                    data-filter="food">Makanan</button>
                 <button class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
-                    data-filter="drink">Drink</button>
+                    data-filter="drink">Minuman</button>
                 <button class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
-                    data-filter="snack">Snack</button>
+                    data-filter="snack">Makanan Ringan</button>
             </div>
         </div>
 
         @php
             $categoryLabels = [
-                'food' => '🍽️ Food',
-                'drink' => '🥤 Drink',
-                'snack' => '🍟 Snack',
+                'food' => '🍽️ Makanan',
+                'drink' => '🥤 Minuman',
+                'snack' => '🍟 Makanan Ringan',
             ];
         @endphp
 
@@ -82,7 +82,7 @@
                             <!-- ADD TO CART -->
                             <button data-menu="{{ $menu->id }}"
                                 class="add-to-cart-btn w-full bg-yellow-500 text-white py-2 rounded-xl mt-2">
-                                Add to Cart
+                                Masukan Pesanan
                             </button>
                         </div>
                     @endforeach
@@ -99,61 +99,105 @@
 @endsection
 
 @if (!session()->has('customer_name'))
-    <div class="fixed inset-0 z-999 bg-black/70 flex items-center justify-center">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl">
+    <div class="fixed inset-0 z-50 bg-gradient-to-br from-purple-900/90 via-purple-700/90 to-fuchsia-600/90 flex items-center justify-center">
 
-            <h2 class="text-2xl font-bold text-center mb-6">
-                🍽️ Welcome
+    <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl">
+
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-500 flex items-center justify-center shadow-md">
+                <span class="text-2xl">🍽️</span>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800 mt-3">
+                Selamat Datang
             </h2>
 
-            <form method="POST" action="{{ route('pelanggan.set.customer') }}">
-                @csrf
-
-                <!-- Nama -->
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold mb-1">
-                        Your Name
-                    </label>
-                    <input type="text" name="customer_name"
-                        class="w-full border rounded-lg px-4 py-2 focus:ring focus:ring-yellow-300" required>
-                </div>
-
-                <!-- Meja -->
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold mb-1">
-                        Select Table
-                    </label>
-                    @if (isset($availableTablesCount) && $availableTablesCount > 0)
-                        <select name="table_id"
-                            class="w-full border rounded-lg px-4 py-2 focus:ring focus:ring-yellow-300" required>
-                            <option value="">-- Choose Table --</option>
-                            @foreach ($tables as $table)
-                                @php
-                                    $status = isset($table->status) ? trim(strtolower($table->status)) : '';
-                                    $disabled = $status !== 'available';
-                                @endphp
-                                <option value="{{ $table->id }}" {{ $disabled ? 'disabled' : '' }}>
-                                    Table {{ $table->table_number }}{{ $disabled ? ' — Occupied' : '' }}
-                                </option>
-                            @endforeach
-                        </select>
-                    @else
-                        <div class="px-4 py-3 rounded-lg bg-red-50 text-red-700 text-center">
-                            Semua meja sedang terisi. Silakan tunggu atau hubungi petugas.
-                        </div>
-                    @endif
-                </div>
-
-                <button
-                    class="w-full bg-yellow-500 text-white py-3 rounded-xl font-semibold
-                       hover:bg-yellow-600 transition"
-                    {{ isset($availableTablesCount) && $availableTablesCount > 0 ? '' : 'disabled' }}>
-                    Start Order
-                </button>
-            </form>
-
+            <p class="text-purple-600 text-sm font-medium">
+                Purple Cafe & Resto
+            </p>
         </div>
+
+        <form method="POST" action="{{ route('pelanggan.set.customer') }}">
+            @csrf
+
+            <!-- Nama -->
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Masukkan Nama
+                </label>
+
+                <input
+                    type="text"
+                    name="customer_name"
+                    placeholder="Nama pelanggan"
+                    required
+                    class="w-full rounded-lg border border-purple-200 px-4 py-2.5
+                           focus:outline-none
+                           focus:ring-2
+                           focus:ring-purple-400
+                           focus:border-purple-500">
+            </div>
+
+            <!-- Meja -->
+            <div class="mb-5">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Pilih Meja
+                </label>
+
+                @if (isset($availableTablesCount) && $availableTablesCount > 0)
+
+                <select
+                    name="table_id"
+                    required
+                    class="w-full rounded-lg border border-purple-200 px-4 py-2.5
+                           focus:outline-none
+                           focus:ring-2
+                           focus:ring-purple-400
+                           focus:border-purple-500">
+
+                    <option value="">-- Pilih Meja --</option>
+
+                    @foreach ($tables as $table)
+                        @php
+                            $status = isset($table->status) ? trim(strtolower($table->status)) : '';
+                            $disabled = $status !== 'available';
+                        @endphp
+
+                        <option value="{{ $table->id }}" {{ $disabled ? 'disabled' : '' }}>
+                            Meja {{ $table->table_number }}
+                            {{ $disabled ? ' • Terisi' : '' }}
+                        </option>
+                    @endforeach
+
+                </select>
+
+                @else
+
+                <div class="px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm text-center">
+                    Semua meja sedang terisi.
+                </div>
+
+                @endif
+            </div>
+
+            <!-- Button -->
+            <button
+                class="w-full bg-gradient-to-r from-purple-600 to-fuchsia-500
+                       text-white py-2.5 rounded-lg font-semibold
+                       hover:from-purple-700 hover:to-fuchsia-600
+                       transition duration-300"
+                {{ isset($availableTablesCount) && $availableTablesCount > 0 ? '' : 'disabled' }}>
+
+                Masuk
+
+            </button>
+
+        </form>
+
     </div>
+
+</div>
 @endif
 
 @section('scripts')
