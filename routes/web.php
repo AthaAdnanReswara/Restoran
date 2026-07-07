@@ -76,4 +76,6 @@ Route::prefix('/')
         Route::post('/signout', [OrderController::class, 'signOut'])->name('signout');
         Route::delete('/order/remove/{id}', [OrderController::class, 'remove'])
             ->name('order.remove');
+
+        Route::post('/order/snap-token', [OrderController::class, 'generateSnapToken'])->name('order.snapToken');
     });

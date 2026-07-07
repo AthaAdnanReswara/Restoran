@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
     @vite('resources/css/app.css')
     <title>Order Food</title>
 </head>
@@ -27,7 +29,7 @@
 
     <script>
         // show flash messages with SweetAlert if present
-        (function(){
+        (function() {
             const success = @json(session('success'));
             const error = @json(session('error'));
             if (success) {

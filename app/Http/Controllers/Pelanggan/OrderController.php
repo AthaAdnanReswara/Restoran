@@ -7,11 +7,67 @@ use App\Models\Menu;
 use App\Models\Table;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Midtrans\Snap;
+use Midtrans\Config;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
+
+    public function generateSnapToken(Request $request)
+    {
+        // 1. Inisialisasi konfigurasi Midtrans SDK
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        // 2. Siapkan data unik pesanan
+        $orderId = 'RESTO-' . time() . '-' . rand(100, 999);
+        $totalHarga = $request->input('total_harga');
+
+        // 3. Susun payload parameters untuk dikirim ke Midtrans
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => (int) $totalHarga,
+            ],
+            'customer_details' => [
+                'first_name' => 'Pelanggan',
+                'email' => 'pelanggan@example.com', // Opsional, sesuaikan jika ada auth()->user()->email
+            ],
+            // Membatasi opsi pembayaran di pop-up agar fokus ke QRIS, Gopay, atau ShopeePay
+            'enabled_payments' => ['qris', 'gopay', 'shopeepay']
+        ];
+
+        try {
+            $guestToken = session('guest_token');
+
+            // 1. Update semua item di keranjang dan berikan Order ID yang sama
+            Transaction::where('guest_token', $guestToken)
+                ->where('status', 'draft')
+                ->update([
+                    'status' => 'ordered',
+                    'payment_method' => 'cashless',
+                    'notes' => $orderId // SEMENTARA: Jika belum ada kolom 'order_id' atau 'invoice' di tabel transactions, Anda bisa manfaatkan kolom 'notes' atau buat kolom baru lewat migration bernama 'order_id'
+                ]);
+
+            // 2. Request token ke Midtrans
+            $snapToken = Snap::getSnapToken($params);
+
+            return response()->json([
+                'status' => 'success',
+                'snap_token' => $snapToken
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function index()
     {
         $tables = Table::orderBy('table_number')->get()->map(function ($t) {
