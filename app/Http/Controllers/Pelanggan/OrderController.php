@@ -216,17 +216,6 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Callback pembayaran Midtrans
-     *
-     * capture / settlement
-     *     -> stok dikurangi
-     *     -> ordered menjadi accepted
-     *
-     * deny / cancel / expire / failure
-     *     -> stok TIDAK dikurangi
-     *     -> ordered menjadi cancelled
-     */
     public function midtransCallback(Request $request)
     {
         $request->validate([
@@ -441,6 +430,7 @@ class OrderController extends Controller
     /**
      * Halaman utama pelanggan
      */
+
     public function index()
     {
         $tables = Table::orderBy('table_number')

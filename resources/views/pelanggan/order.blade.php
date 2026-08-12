@@ -262,95 +262,62 @@
 
                             // Munculkan pop-up Midtrans Snap secara langsung di layar
                             window.snap.pay(data.snap_token, {
-
                                 onSuccess: async function(result) {
-
                                     alert("Pembayaran Berhasil!");
                                     console.log(result);
 
-                                    try {
+                                    const callbackResponse = await fetch(
+                                        "{{ route('pelanggan.payment.midtrans.callback') }}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector(
+                                                        'meta[name="csrf-token"]')
+                                                    .getAttribute('content')
+                                            },
+                                            body: JSON.stringify(result)
+                                        });
 
-                                        const callbackResponse = await fetch(
-                                            "{{ route('pelanggan.payment.midtrans.callback') }}", {
-                                                method: 'POST',
-
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRF-TOKEN': document
-                                                        .querySelector(
-                                                            'meta[name="csrf-token"]')
-                                                        .getAttribute('content')
-                                                },
-
-                                                body: JSON.stringify(result)
-                                            }
-                                        );
-
-                                        const callbackData =
-                                            await callbackResponse.json();
-
-                                        if (callbackData.status === 'success') {
-
-                                            window.location.href =
-                                                "{{ route('pelanggan.transaction') }}";
-
-                                        } else {
-
-                                            alert(
-                                                callbackData.message ||
-                                                'Gagal menyimpan status pembayaran ke server.'
-                                            );
-                                        }
-
-                                    } catch (error) {
-
-                                        console.error(
-                                            'Callback pembayaran error:',
-                                            error
-                                        );
-
-                                        alert(
-                                            'Pembayaran berhasil, tetapi gagal memperbarui status pesanan.'
-                                        );
+                                    const callbackData = await callbackResponse.json();
+                                    if (callbackData.status === 'success') {
+                                        window.location.href =
+                                            "{{ route('pelanggan.transaction') }}";
+                                    } else {
+                                        alert('Gagal menyimpan status pembayaran ke server.');
                                     }
                                 },
+                                onPending: async function(result) {
+                                    alert("Menunggu Pembayaran Anda!");
+                                    console.log(result);
 
-                                onPending: function(result) {
+                                    const callbackResponse = await fetch(
+                                        "{{ route('pelanggan.payment.midtrans.callback') }}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector(
+                                                        'meta[name="csrf-token"]')
+                                                    .getAttribute('content')
+                                            },
+                                            body: JSON.stringify(result)
+                                        });
 
-                                    console.log(
-                                        'Pembayaran masih pending:',
-                                        result
-                                    );
-
-                                    alert(
-                                        "Pembayaran masih menunggu. Stok belum dikurangi."
-                                    );
-
-                                    /*
-                                     * JANGAN panggil midtransCallback di sini.
-                                     *
-                                     * Karena pembayaran belum berhasil.
-                                     */
+                                    const callbackData = await callbackResponse.json();
+                                    if (callbackData.status === 'success') {
+                                        window.location.href =
+                                            "{{ route('pelanggan.transaction') }}";
+                                    } else {
+                                        alert('Gagal menyimpan status pembayaran ke server.');
+                                    }
                                 },
-
                                 onError: function(result) {
-
-                                    console.log(
-                                        'Pembayaran gagal:',
-                                        result
-                                    );
-
-                                    alert(
-                                        "Pembayaran gagal. Stok tidak dikurangi."
-                                    );
+                                    alert("Pembayaran Gagal/Dibatalkan.");
+                                    console.log(result);
                                 },
-
                                 onClose: function() {
-
                                     alert(
-                                        "Anda menutup halaman pembayaran. " +
-                                        "Pesanan belum dianggap lunas dan stok belum dikurangi."
-                                    );
+                                        'Anda menutup halaman pembayaran sebelum menyelesaikannya.');
+
                                 }
                             });
                         } else {
