@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Pegawai;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Models\Menu;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -47,17 +49,115 @@ class OrderController extends Controller
     }
 
     // Mark transactions as completed (called when staff finishes preparing/delivering order)
+    /**
+     * Menyelesaikan pesanan.
+     *
+     * accepted -> completed
+     *
+     * Stok baru dikurangi di sini.
+     */
     public function complete(Request $request)
     {
         $transactionId = $request->input('transaction_id');
-        if ($transactionId) {
-            Transaction::where('id', $transactionId)
-                ->whereIn('status', ['accepted'])
-                ->update(['status' => 'completed']);
 
-            return response()->json(['success' => true]);
+        if (!$transactionId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction ID tidak ditemukan.'
+            ], 400);
         }
 
-        return response()->json(['success' => false], 400);
+        try {
+
+            DB::transaction(function () use ($transactionId) {
+
+                $transaction = Transaction::lockForUpdate()
+                    ->where('id', $transactionId)
+                    ->where('status', 'accepted')
+                    ->first();
+
+                if (!$transaction) {
+
+                    $existing = Transaction::find($transactionId);
+
+                    if ($existing && $existing->status === 'completed') {
+                        throw new \Exception(
+                            'Pesanan ini sudah diselesaikan.'
+                        );
+                    }
+
+                    throw new \Exception(
+                        'Pesanan tidak ditemukan atau belum berstatus accepted.'
+                    );
+                }
+
+                /*
+            |--------------------------------------------------------------------------
+            | HANYA CASH
+            |--------------------------------------------------------------------------
+            |
+            | Cash baru mengurangi stok ketika Admin menekan Completed.
+            |
+            */
+
+                if ($transaction->payment_method === 'cash') {
+
+                    $menu = Menu::lockForUpdate()
+                        ->find($transaction->menu_id);
+
+                    if (!$menu) {
+                        throw new \Exception(
+                            'Menu tidak ditemukan.'
+                        );
+                    }
+
+                    if ($transaction->quantity <= 0) {
+                        throw new \Exception(
+                            "Quantity {$menu->name} tidak valid."
+                        );
+                    }
+
+                    if ($menu->stok < $transaction->quantity) {
+                        throw new \Exception(
+                            "Stok {$menu->name} tidak mencukupi. " .
+                                "Stok tersedia: {$menu->stok}, " .
+                                "jumlah dipesan: {$transaction->quantity}."
+                        );
+                    }
+
+                    /*
+                |--------------------------------------------------------------------------
+                | KURANGI STOK CASH
+                |--------------------------------------------------------------------------
+                */
+
+                    $menu->decrement(
+                        'stok',
+                        $transaction->quantity
+                    );
+                }
+
+                /*
+            |--------------------------------------------------------------------------
+            | Semua pembayaran tetap menjadi completed
+            |--------------------------------------------------------------------------
+            */
+
+                $transaction->update([
+                    'status' => 'completed',
+                ]);
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil diselesaikan.'
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
     }
 }

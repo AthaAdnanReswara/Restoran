@@ -73,6 +73,8 @@ Route::prefix('/')
             ->name('payment.qris');
         Route::post('/payment/qris/paid', [OrderController::class, 'markPaid'])
             ->name('payment.qris.paid');
+        Route::post('/payment/midtrans/callback', [OrderController::class, 'midtransCallback'])
+            ->name('payment.midtrans.callback');
         Route::post('/signout', [OrderController::class, 'signOut'])->name('signout');
         Route::delete('/order/remove/{id}', [OrderController::class, 'remove'])
             ->name('order.remove');

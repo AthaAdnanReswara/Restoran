@@ -31,11 +31,12 @@ class MenuController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'price'    => 'required|numeric|min:0',
+            'stok'     => 'required|integer|min:0',
             'category' => 'required|in:food,drink,snack',
             'image'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->only(['name', 'price', 'category']);
+        $data = $request->only(['name', 'price', 'stok', 'category']);
 
         // upload gambar
         if ($request->hasFile('image')) {
@@ -62,11 +63,12 @@ class MenuController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'price'    => 'required|numeric|min:0',
+            'stok'     => 'required|integer|min:0',
             'category' => 'required|in:food,drink,snack',
             'image'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->only(['name', 'price', 'category']);
+        $data = $request->only(['name', 'price', 'stok', 'category']);
 
         // jika upload gambar baru
         if ($request->hasFile('image')) {

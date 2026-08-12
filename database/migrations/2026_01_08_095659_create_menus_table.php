@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('price', 10, 2);
+            $table->integer('stok')->default(0);
             $table->enum('category', ['food', 'drink', 'snack']);
             $table->string('image')->nullable(); 
             $table->timestamps();

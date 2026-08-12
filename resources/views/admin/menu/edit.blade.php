@@ -9,8 +9,11 @@
 
         {{-- Header --}}
         <div class="bg-yellow-400 px-6 py-4">
-            <h2 class="text-xl font-bold text-gray-800">✏️ Edit Menu</h2>
+            <h2 class="text-xl font-bold text-gray-800">
+                ✏️ Edit Menu
+            </h2>
         </div>
+
 
         {{-- Body --}}
         <div class="p-5 sm:p-6 space-y-6">
@@ -26,124 +29,283 @@
             </div>
             @endif
 
-            <form action="{{ route('admin.menu.update', $menu->id) }}" method="POST"
-                enctype="multipart/form-data" class="space-y-6">
+
+            <form
+                action="{{ route('admin.menu.update', $menu->id) }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="space-y-6">
+
                 @csrf
                 @method('PUT')
+
 
                 <!-- GRID FORM -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
+
                     {{-- Nama --}}
                     <div>
-                        <label class="block text-sm font-semibold mb-1">Nama Menu</label>
-                        <input type="text" name="name"
+                        <label class="block text-sm font-semibold mb-1">
+                            Nama Menu
+                        </label>
+
+                        <input
+                            type="text"
+                            name="name"
                             value="{{ old('name', $menu->name) }}"
                             class="w-full rounded-xl border-gray-300
                                    focus:border-yellow-500 focus:ring-yellow-500"
                             required>
+
+                        @error('name')
+                            <p class="text-red-500 text-sm mt-1">
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
+
 
                     {{-- Harga --}}
                     <div>
-                        <label class="block text-sm font-semibold mb-1">Harga</label>
-                        <input type="number" name="price"
+                        <label class="block text-sm font-semibold mb-1">
+                            Harga
+                        </label>
+
+                        <input
+                            type="number"
+                            name="price"
                             value="{{ old('price', $menu->price) }}"
+                            min="0"
                             class="w-full rounded-xl border-gray-300
                                    focus:border-yellow-500 focus:ring-yellow-500"
                             required>
+
+                        @error('price')
+                            <p class="text-red-500 text-sm mt-1">
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                    {{-- Kategori --}}
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold mb-1">Kategori</label>
-                        <select name="category"
+
+                    {{-- Stok --}}
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">
+                            Jumlah Stok
+                        </label>
+
+                        <input
+                            type="number"
+                            name="stok"
+                            value="{{ old('stok', $menu->stok) }}"
+                            min="0"
                             class="w-full rounded-xl border-gray-300
                                    focus:border-yellow-500 focus:ring-yellow-500"
                             required>
-                            <option value="food" {{ $menu->category=='food'?'selected':'' }}>Makanan</option>
-                            <option value="drink" {{ $menu->category=='drink'?'selected':'' }}>Minuman</option>
-                            <option value="snack" {{ $menu->category=='snack'?'selected':'' }}>Snack</option>
+
+                        <p class="text-xs text-gray-500 mt-1">
+                            Stok saat ini: {{ $menu->stok }}
+                        </p>
+
+                        @error('stok')
+                            <p class="text-red-500 text-sm mt-1">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+
+                    {{-- Kategori --}}
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">
+                            Kategori
+                        </label>
+
+                        <select
+                            name="category"
+                            class="w-full rounded-xl border-gray-300
+                                   focus:border-yellow-500 focus:ring-yellow-500"
+                            required>
+
+                            <option value="food"
+                                {{ old('category', $menu->category) == 'food' ? 'selected' : '' }}>
+                                Makanan
+                            </option>
+
+                            <option value="drink"
+                                {{ old('category', $menu->category) == 'drink' ? 'selected' : '' }}>
+                                Minuman
+                            </option>
+
+                            <option value="snack"
+                                {{ old('category', $menu->category) == 'snack' ? 'selected' : '' }}>
+                                Snack
+                            </option>
+
                         </select>
+
+                        @error('category')
+                            <p class="text-red-500 text-sm mt-1">
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                 </div>
 
+
                 {{-- FOTO --}}
                 <div>
-                    <label class="block text-sm font-semibold mb-2">Foto Menu</label>
+
+                    <label class="block text-sm font-semibold mb-2">
+                        Foto Menu
+                    </label>
+
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
+
                         {{-- Foto Lama --}}
                         <div class="text-center">
-                            <p class="text-sm font-semibold mb-2">Foto Lama</p>
+
+                            <p class="text-sm font-semibold mb-2">
+                                Foto Lama
+                            </p>
+
                             @if ($menu->image)
-                            <img src="{{ asset('storage/'.$menu->image) }}"
+
+                            <img
+                                src="{{ asset('storage/'.$menu->image) }}"
                                 class="mx-auto w-32 h-32 sm:w-36 sm:h-36
-                                            object-cover rounded-xl border">
+                                       object-cover rounded-xl border">
+
                             @else
-                            <p class="text-gray-400 italic text-sm">Belum ada foto</p>
+
+                            <div class="mx-auto w-32 h-32 sm:w-36 sm:h-36
+                                        bg-gray-100 rounded-xl border
+                                        flex items-center justify-center">
+
+                                <p class="text-gray-400 italic text-sm">
+                                    Belum ada foto
+                                </p>
+
+                            </div>
+
                             @endif
+
                         </div>
+
 
                         {{-- Preview Baru --}}
                         <div class="text-center">
-                            <p class="text-sm font-semibold mb-2">Preview Foto Baru</p>
-                            <img id="preview-image"
-                                class="mx-auto w-32 h-32 sm:w-36 sm:h-36
-                                        object-cover rounded-xl border hidden">
-                            <p id="preview-text" class="text-gray-400 italic text-sm">
-                                Belum ada foto dipilih
+
+                            <p class="text-sm font-semibold mb-2">
+                                Preview Foto Baru
                             </p>
+
+                            <img
+                                id="preview-image"
+                                class="mx-auto w-32 h-32 sm:w-36 sm:h-36
+                                       object-cover rounded-xl border hidden">
+
+                            <p
+                                id="preview-text"
+                                class="text-gray-400 italic text-sm">
+
+                                Belum ada foto dipilih
+
+                            </p>
+
                         </div>
 
                     </div>
 
-                    <input type="file" name="image" accept="image/*"
+
+                    <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
                         class="mt-4 w-full text-sm
-                               file:mr-4 file:rounded-xl
-                               file:border-0 file:bg-yellow-500
-                               file:px-4 file:py-2
-                               file:text-white file:font-semibold
-                               hover:file:bg-yellow-600 transition">
+                               file:mr-4
+                               file:rounded-xl
+                               file:border-0
+                               file:bg-yellow-500
+                               file:px-4
+                               file:py-2
+                               file:text-white
+                               file:font-semibold
+                               hover:file:bg-yellow-600
+                               transition">
+
 
                     <p class="text-xs text-gray-500 mt-1">
                         Kosongkan jika tidak ingin mengganti foto
                     </p>
+
+                    @error('image')
+                        <p class="text-red-500 text-sm mt-1">
+                            {{ $message }}
+                        </p>
+                    @enderror
+
                 </div>
+
 
                 {{-- BUTTON --}}
                 <div class="flex flex-col sm:flex-row justify-between gap-3 pt-4">
-                    <a href="{{ route('admin.menu.index') }}"
+
+                    <a
+                        href="{{ route('admin.menu.index') }}"
                         class="text-center rounded-xl bg-gray-200 hover:bg-gray-300
-                              px-5 py-2 font-semibold transition">
+                               px-5 py-2 font-semibold transition">
+
                         Kembali
+
                     </a>
 
-                    <button type="submit"
+
+                    <button
+                        type="submit"
                         class="rounded-xl bg-yellow-500 hover:bg-yellow-600
                                px-6 py-2 text-white font-semibold transition">
+
                         Update Menu
+
                     </button>
+
                 </div>
+
 
             </form>
         </div>
+
     </div>
+
 </div>
+
 
 {{-- Preview Image --}}
 <script>
     document.querySelector('input[name="image"]').addEventListener('change', e => {
+
         const img = document.getElementById('preview-image')
         const text = document.getElementById('preview-text')
 
         if (e.target.files[0]) {
+
             img.src = URL.createObjectURL(e.target.files[0])
             img.classList.remove('hidden')
             text.classList.add('hidden')
+
+        } else {
+
+            img.classList.add('hidden')
+            text.classList.remove('hidden')
+
         }
+
     })
 </script>
+
 @endsection
