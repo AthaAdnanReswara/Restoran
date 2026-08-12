@@ -29,12 +29,86 @@ class OrderController extends Controller
     public function accept(Request $request)
     {
         $transactionId = $request->input('transaction_id');
-        if ($transactionId) {
-            Transaction::where('id', $transactionId)->where('status', 'ordered')->update(['status' => 'accepted']);
-            return response()->json(['success' => true]);
+
+        if (!$transactionId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction ID tidak ditemukan.'
+            ], 400);
         }
 
-        return response()->json(['success' => false], 400);
+        try {
+            DB::transaction(function () use ($transactionId) {
+
+                // Kunci transaksi agar tidak diproses dua kali
+                $transaction = Transaction::lockForUpdate()
+                    ->where('id', $transactionId)
+                    ->where('status', 'ordered')
+                    ->first();
+
+                if (!$transaction) {
+                    throw new \Exception(
+                        'Pesanan tidak ditemukan atau sudah diproses.'
+                    );
+                }
+
+                /*
+            |--------------------------------------------------------------------------
+            | KURANGI STOK SAAT ACCEPT
+            |--------------------------------------------------------------------------
+            */
+
+                $menu = Menu::lockForUpdate()
+                    ->find($transaction->menu_id);
+
+                if (!$menu) {
+                    throw new \Exception(
+                        'Menu tidak ditemukan.'
+                    );
+                }
+
+                if ($transaction->quantity <= 0) {
+                    throw new \Exception(
+                        "Quantity {$menu->name} tidak valid."
+                    );
+                }
+
+                if ($menu->stok < $transaction->quantity) {
+                    throw new \Exception(
+                        "Stok {$menu->name} tidak mencukupi. " .
+                            "Stok tersedia: {$menu->stok}, " .
+                            "jumlah dipesan: {$transaction->quantity}."
+                    );
+                }
+
+                // Kurangi stok
+                $menu->decrement(
+                    'stok',
+                    $transaction->quantity
+                );
+
+                /*
+            |--------------------------------------------------------------------------
+            | UBAH STATUS MENJADI ACCEPTED
+            |--------------------------------------------------------------------------
+            */
+
+                $transaction->update([
+                    'status' => 'accepted'
+                ]);
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan diterima dan stok berhasil dikurangi.'
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
     }
 
     public function reject(Request $request)
@@ -69,84 +143,31 @@ class OrderController extends Controller
 
         try {
 
-            DB::transaction(function () use ($transactionId) {
+            $transaction = Transaction::where('id', $transactionId)
+                ->where('status', 'accepted')
+                ->first();
 
-                $transaction = Transaction::lockForUpdate()
-                    ->where('id', $transactionId)
-                    ->where('status', 'accepted')
-                    ->first();
+            if (!$transaction) {
 
-                if (!$transaction) {
+                $existing = Transaction::find($transactionId);
 
-                    $existing = Transaction::find($transactionId);
-
-                    if ($existing && $existing->status === 'completed') {
-                        throw new \Exception(
-                            'Pesanan ini sudah diselesaikan.'
-                        );
-                    }
-
-                    throw new \Exception(
-                        'Pesanan tidak ditemukan atau belum berstatus accepted.'
-                    );
+                if ($existing && $existing->status === 'completed') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Pesanan ini sudah diselesaikan.'
+                    ], 422);
                 }
 
-                /*
-            |--------------------------------------------------------------------------
-            | HANYA CASH
-            |--------------------------------------------------------------------------
-            |
-            | Cash baru mengurangi stok ketika Admin menekan Completed.
-            |
-            */
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pesanan tidak ditemukan atau belum berstatus accepted.'
+                ], 422);
+            }
 
-                if ($transaction->payment_method === 'cash') {
-
-                    $menu = Menu::lockForUpdate()
-                        ->find($transaction->menu_id);
-
-                    if (!$menu) {
-                        throw new \Exception(
-                            'Menu tidak ditemukan.'
-                        );
-                    }
-
-                    if ($transaction->quantity <= 0) {
-                        throw new \Exception(
-                            "Quantity {$menu->name} tidak valid."
-                        );
-                    }
-
-                    if ($menu->stok < $transaction->quantity) {
-                        throw new \Exception(
-                            "Stok {$menu->name} tidak mencukupi. " .
-                                "Stok tersedia: {$menu->stok}, " .
-                                "jumlah dipesan: {$transaction->quantity}."
-                        );
-                    }
-
-                    /*
-                |--------------------------------------------------------------------------
-                | KURANGI STOK CASH
-                |--------------------------------------------------------------------------
-                */
-
-                    $menu->decrement(
-                        'stok',
-                        $transaction->quantity
-                    );
-                }
-
-                /*
-            |--------------------------------------------------------------------------
-            | Semua pembayaran tetap menjadi completed
-            |--------------------------------------------------------------------------
-            */
-
-                $transaction->update([
-                    'status' => 'completed',
-                ]);
-            });
+            // Hanya mengubah status
+            $transaction->update([
+                'status' => 'completed'
+            ]);
 
             return response()->json([
                 'success' => true,
