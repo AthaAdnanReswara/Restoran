@@ -229,67 +229,107 @@
         });
 
         // ===== INTEGRASI MIDTRANS PADA ORDER FORM =====
-const orderForm = document.getElementById('orderForm');
+        const orderForm = document.getElementById('orderForm');
 
-orderForm.addEventListener('submit', (e) => {
-    const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        orderForm.addEventListener('submit', (e) => {
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
 
-    // Jika memilih Cashless (QRIS / E-Wallet), cegah submit bawaan dan panggil Midtrans
-    if (paymentMethod === 'cashless') {
-        e.preventDefault(); // Menghentikan submit form ke backend secara konvensional
+            // Jika memilih Cashless (QRIS / E-Wallet), cegah submit bawaan dan panggil Midtrans
+            if (paymentMethod === 'cashless') {
+                e.preventDefault(); // Menghentikan submit form ke backend secara konvensional
 
-        // Mengambil total harga dari ID cartTotal (membersihkan teks "Rp" dan titik ".")
-        const totalHargaText = document.getElementById('cartTotal').innerText;
-        const totalHarga = parseInt(totalHargaText.replace(/[^0-9]/g, ''));
+                // Mengambil total harga dari ID cartTotal (membersihkan teks "Rp" dan titik ".")
+                const totalHargaText = document.getElementById('cartTotal').innerText;
+                const totalHarga = parseInt(totalHargaText.replace(/[^0-9]/g, ''));
 
-        // Kirim request AJAX ke backend untuk membuat transaksi dan mendapatkan Snap Token
-        fetch("{{ route('pelanggan.order.snapToken') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                total_harga: totalHarga
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success' && data.snap_token) {
-                // Tutup modal konfirmasi order terlebih dahulu
-                closeOrderModal();
+                // Kirim request AJAX ke backend untuk membuat transaksi dan mendapatkan Snap Token
+                fetch("{{ route('pelanggan.order.snapToken') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            total_harga: totalHarga
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(async data => {
+                        if (data.status === 'success' && data.snap_token) {
+                            // Tutup modal konfirmasi order terlebih dahulu
+                            closeOrderModal();
 
-                // Munculkan pop-up Midtrans Snap secara langsung di layar
-                window.snap.pay(data.snap_token, {
-                    onSuccess: function(result) {
-                        alert("Pembayaran Berhasil!");
-                        console.log(result);
-                        window.location.href = "{{ route('pelanggan.order') }}"; 
-                    },
-                    onPending: function(result) {
-                        alert("Menunggu Pembayaran Anda!");
-                        console.log(result);
-                        window.location.reload();
-                    },
-                    onError: function(result) {
-                        alert("Pembayaran Gagal/Dibatalkan.");
-                        console.log(result);
-                    },
-                    onClose: function() {
-                        alert('Anda menutup halaman pembayaran sebelum menyelesaikannya.');
-                    }
-                });
-            } else {
-                alert('Gagal mendapatkan token pembayaran: ' + data.message);
+                            // Munculkan pop-up Midtrans Snap secara langsung di layar
+                            window.snap.pay(data.snap_token, {
+                                onSuccess: async function(result) {
+                                    alert("Pembayaran Berhasil!");
+                                    console.log(result);
+
+                                    const callbackResponse = await fetch(
+                                        "{{ route('pelanggan.payment.midtrans.callback') }}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector(
+                                                        'meta[name="csrf-token"]')
+                                                    .getAttribute('content')
+                                            },
+                                            body: JSON.stringify(result)
+                                        });
+
+                                    const callbackData = await callbackResponse.json();
+                                    if (callbackData.status === 'success') {
+                                        window.location.href =
+                                            "{{ route('pelanggan.transaction') }}";
+                                    } else {
+                                        alert('Gagal menyimpan status pembayaran ke server.');
+                                    }
+                                },
+                                onPending: async function(result) {
+                                    alert("Menunggu Pembayaran Anda!");
+                                    console.log(result);
+
+                                    const callbackResponse = await fetch(
+                                        "{{ route('pelanggan.payment.midtrans.callback') }}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector(
+                                                        'meta[name="csrf-token"]')
+                                                    .getAttribute('content')
+                                            },
+                                            body: JSON.stringify(result)
+                                        });
+
+                                    const callbackData = await callbackResponse.json();
+                                    if (callbackData.status === 'success') {
+                                        window.location.href =
+                                            "{{ route('pelanggan.transaction') }}";
+                                    } else {
+                                        alert('Gagal menyimpan status pembayaran ke server.');
+                                    }
+                                },
+                                onError: function(result) {
+                                    alert("Pembayaran Gagal/Dibatalkan.");
+                                    console.log(result);
+                                },
+                                onClose: function() {
+                                    alert(
+                                        'Anda menutup halaman pembayaran sebelum menyelesaikannya.');
+                                }
+                            });
+                        } else {
+                            alert('Gagal mendapatkan token pembayaran: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error Midtrans:', error);
+                        alert('Terjadi kesalahan koneksi sistem pembayaran.');
+                    });
             }
-        })
-        .catch(error => {
-            console.error('Error Midtrans:', error);
-            alert('Terjadi kesalahan koneksi sistem pembayaran.');
+            // Jika memilih 'cash', biarkan form submit normal ke action="{{ route('pelanggan.order.confirm') }}"
         });
-    }
-    // Jika memilih 'cash', biarkan form submit normal ke action="{{ route('pelanggan.order.confirm') }}"
-});
 
         // // Handle order form submission
         // orderForm.addEventListener('submit', (e) => {

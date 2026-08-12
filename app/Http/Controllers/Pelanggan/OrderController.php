@@ -42,23 +42,13 @@ class OrderController extends Controller
         ];
 
         try {
-            $guestToken = session('guest_token');
-
-            // 1. Update semua item di keranjang dan berikan Order ID yang sama
-            Transaction::where('guest_token', $guestToken)
-                ->where('status', 'draft')
-                ->update([
-                    'status' => 'ordered',
-                    'payment_method' => 'cashless',
-                    'notes' => $orderId // SEMENTARA: Jika belum ada kolom 'order_id' atau 'invoice' di tabel transactions, Anda bisa manfaatkan kolom 'notes' atau buat kolom baru lewat migration bernama 'order_id'
-                ]);
-
-            // 2. Request token ke Midtrans
+            // 1. Request token ke Midtrans
             $snapToken = Snap::getSnapToken($params);
 
             return response()->json([
                 'status' => 'success',
-                'snap_token' => $snapToken
+                'snap_token' => $snapToken,
+                'order_id' => $orderId,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -66,6 +56,35 @@ class OrderController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function midtransCallback(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|string',
+            'transaction_status' => 'required|string',
+            'payment_type' => 'nullable|string',
+            'gross_amount' => 'nullable|numeric',
+        ]);
+
+        $transactionStatus = $request->input('transaction_status');
+        $status = 'ordered';
+
+        if (in_array($transactionStatus, ['capture', 'settlement'])) {
+            $status = 'accepted';
+        } elseif (in_array($transactionStatus, ['deny', 'cancel', 'expire', 'failure'])) {
+            $status = 'cancelled';
+        }
+
+        Transaction::where('guest_token', session('guest_token'))
+            ->where('status', 'draft')
+            ->update([
+                'status' => $status,
+                'payment_method' => 'cashless',
+                'receipt' => json_encode($request->all(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            ]);
+
+        return response()->json(['status' => 'success']);
     }
 
     public function index()
