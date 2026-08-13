@@ -20,11 +20,7 @@
 
             <div class="search md:w-auto relative">
 
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    fill="#999"
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#999"
                     class="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
 
                     <path
@@ -34,9 +30,7 @@
 
                 <input
                     class="w-full md:w-auto px-4 pl-10 py-2 rounded-lg shadow-md border-2 border-gray-200 focus:border-yellow-500 focus:outline-none transition"
-                    type="text"
-                    id="search-input"
-                    placeholder="Search menu...">
+                    type="text" id="search-input" placeholder="Search menu...">
 
             </div>
 
@@ -48,32 +42,28 @@
 
             <div class="filter gap-2 flex flex-wrap">
 
-                <button
-                    class="active bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-md text-sm md:text-base"
+                <button class="active bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-md text-sm md:text-base"
                     data-filter="all">
 
                     All
 
                 </button>
 
-                <button
-                    class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
+                <button class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
                     data-filter="food">
 
                     Makanan
 
                 </button>
 
-                <button
-                    class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
+                <button class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
                     data-filter="drink">
 
                     Minuman
 
                 </button>
 
-                <button
-                    class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
+                <button class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm md:text-base"
                     data-filter="snack">
 
                     Makanan Ringan
@@ -97,7 +87,6 @@
 
 
         @forelse ($menus as $category => $items)
-
             <div class="wrapper-menu mx-2 mb-10">
 
                 <!-- TITLE CATEGORY -->
@@ -113,25 +102,17 @@
 
 
                 <!-- MENU GRID -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
 
                     @foreach ($items as $menu)
-
-                        <div
-                            class="item-menu bg-white rounded-2xl shadow hover:shadow-lg transition p-3"
-                            data-category="{{ $category }}"
-                            data-name="{{ strtolower($menu->name) }}">
+                        <div class="item-menu bg-white rounded-2xl shadow hover:shadow-lg transition p-3 flex flex-col h-full"
+                            data-category="{{ $category }}" data-name="{{ strtolower($menu->name) }}">
 
                             <!-- FOTO -->
                             @if ($menu->image)
-
-                                <img
-                                    class="rounded-xl w-full h-36 object-cover"
-                                    src="{{ asset('storage/' . $menu->image) }}"
-                                    alt="{{ $menu->name }}">
-
+                                <img class="rounded-xl w-full h-36 object-cover"
+                                    src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}">
                             @else
-
                                 <div
                                     class="rounded-xl w-full h-36 bg-gray-100
                                            flex items-center justify-center
@@ -140,12 +121,11 @@
                                     No Image
 
                                 </div>
-
                             @endif
 
 
                             <!-- INFO MENU -->
-                            <div class="info-menu mt-3">
+                            <div class="info-menu mt-3 flex-1">
 
                                 <div class="flex justify-between items-start gap-2">
 
@@ -164,7 +144,6 @@
                                 <div class="mt-2">
 
                                     @if ($menu->stok > 5)
-
                                         <span
                                             class="inline-flex items-center
                                                    px-2.5 py-1 rounded-full
@@ -174,9 +153,7 @@
                                             ✓ Stok: {{ $menu->stok }}
 
                                         </span>
-
                                     @elseif ($menu->stok > 0)
-
                                         <span
                                             class="inline-flex items-center
                                                    px-2.5 py-1 rounded-full
@@ -186,9 +163,7 @@
                                             ⚠ Stok terbatas: {{ $menu->stok }}
 
                                         </span>
-
                                     @else
-
                                         <span
                                             class="inline-flex items-center
                                                    px-2.5 py-1 rounded-full
@@ -198,7 +173,6 @@
                                             ✕ Stok habis
 
                                         </span>
-
                                     @endif
 
                                 </div>
@@ -208,33 +182,25 @@
 
                             <!-- ADD TO CART -->
                             @if ($menu->stok > 0)
-
-                                <button
-                                    data-menu="{{ $menu->id }}"
+                                <button data-menu="{{ $menu->id }}"
                                     class="add-to-cart-btn w-full bg-yellow-500
-                                           hover:bg-yellow-600 text-white
-                                           py-2 rounded-xl mt-3 transition">
+                                            hover:bg-yellow-600 text-white
+                                            py-2 rounded-xl mt-auto transition">
 
                                     Masukan Pesanan
 
                                 </button>
-
                             @else
-
-                                <button
-                                    type="button"
-                                    disabled
+                                <button type="button" disabled
                                     class="w-full bg-gray-300 text-gray-500
-                                           py-2 rounded-xl mt-3 cursor-not-allowed">
+                                    py-2 rounded-xl mt-auto cursor-not-allowed">
 
                                     Stok Habis
 
                                 </button>
-
                             @endif
 
                         </div>
-
                     @endforeach
 
                 </div>
@@ -246,7 +212,6 @@
             <p class="text-gray-500 italic text-center mt-10">
                 No menu available.
             </p>
-
         @endforelse
 
     </section>
@@ -287,9 +252,7 @@
                 </div>
 
 
-                <form
-                    method="POST"
-                    action="{{ route('pelanggan.set.customer') }}">
+                <form method="POST" action="{{ route('pelanggan.set.customer') }}">
 
                     @csrf
 
@@ -301,11 +264,7 @@
                             Masukkan Nama
                         </label>
 
-                        <input
-                            type="text"
-                            name="customer_name"
-                            placeholder="Nama pelanggan"
-                            required
+                        <input type="text" name="customer_name" placeholder="Nama pelanggan" required
                             class="w-full rounded-lg border border-purple-200
                                    px-4 py-2.5 focus:outline-none
                                    focus:ring-2 focus:ring-purple-400
@@ -323,10 +282,7 @@
 
 
                         @if (isset($availableTablesCount) && $availableTablesCount > 0)
-
-                            <select
-                                name="table_id"
-                                required
+                            <select name="table_id" required
                                 class="w-full rounded-lg border border-purple-200
                                        px-4 py-2.5 focus:outline-none
                                        focus:ring-2 focus:ring-purple-400
@@ -338,34 +294,26 @@
 
 
                                 @foreach ($tables as $table)
-
                                     @php
 
-                                        $status = isset($table->status)
-                                            ? trim(strtolower($table->status))
-                                            : '';
+                                        $status = isset($table->status) ? trim(strtolower($table->status)) : '';
 
                                         $disabled = $status !== 'available';
 
                                     @endphp
 
 
-                                    <option
-                                        value="{{ $table->id }}"
-                                        {{ $disabled ? 'disabled' : '' }}>
+                                    <option value="{{ $table->id }}" {{ $disabled ? 'disabled' : '' }}>
 
                                         Meja {{ $table->table_number }}
 
                                         {{ $disabled ? ' • Terisi' : '' }}
 
                                     </option>
-
                                 @endforeach
 
                             </select>
-
                         @else
-
                             <div
                                 class="px-4 py-3 rounded-lg
                                        bg-red-50 text-red-600
@@ -374,7 +322,6 @@
                                 Semua meja sedang terisi.
 
                             </div>
-
                         @endif
 
                     </div>
@@ -406,106 +353,102 @@
 
 
 @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-<script>
+            const searchInput = document.getElementById('search-input');
 
-    document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('[data-filter]');
 
-        const searchInput = document.getElementById('search-input');
+            const items = document.querySelectorAll('.item-menu');
 
-        const filterButtons = document.querySelectorAll('[data-filter]');
-
-        const items = document.querySelectorAll('.item-menu');
-
-        let activeFilter = 'all';
+            let activeFilter = 'all';
 
 
-        function setActive(btn) {
+            function setActive(btn) {
 
-            filterButtons.forEach(b => {
+                filterButtons.forEach(b => {
 
-                b.classList.remove(
+                    b.classList.remove(
+                        'active',
+                        'bg-yellow-500',
+                        'text-white'
+                    );
+
+                });
+
+                btn.classList.add(
                     'active',
                     'bg-yellow-500',
                     'text-white'
                 );
 
-            });
-
-            btn.classList.add(
-                'active',
-                'bg-yellow-500',
-                'text-white'
-            );
-
-        }
+            }
 
 
-        filterButtons.forEach(btn => {
+            filterButtons.forEach(btn => {
 
-            btn.addEventListener('click', function() {
+                btn.addEventListener('click', function() {
 
-                activeFilter = this.getAttribute('data-filter');
+                    activeFilter = this.getAttribute('data-filter');
 
-                setActive(this);
+                    setActive(this);
 
-                applyFilter();
+                    applyFilter();
+
+                });
 
             });
+
+
+            if (searchInput) {
+
+                searchInput.addEventListener(
+                    'input',
+                    applyFilter
+                );
+
+            }
+
+
+            function applyFilter() {
+
+                const q = (
+                    searchInput &&
+                    searchInput.value || ''
+                ).trim().toLowerCase();
+
+
+                items.forEach(item => {
+
+                    const name = (
+                        item.getAttribute('data-name') || ''
+                    ).toLowerCase();
+
+
+                    const cat = (
+                        item.getAttribute('data-category') || ''
+                    ).toLowerCase();
+
+
+                    const matchesSearch =
+                        q === '' || name.includes(q);
+
+
+                    const matchesCategory =
+                        activeFilter === 'all' ||
+                        activeFilter === cat;
+                    if (matchesSearch && matchesCategory) {
+                        item.style.display = '';
+
+                    } else {
+                        item.style.display = 'none';
+                    }
+
+                });
+
+            }
 
         });
-
-
-        if (searchInput) {
-
-            searchInput.addEventListener(
-                'input',
-                applyFilter
-            );
-
-        }
-
-
-        function applyFilter() {
-
-            const q = (
-                searchInput &&
-                searchInput.value || ''
-            ).trim().toLowerCase();
-
-
-            items.forEach(item => {
-
-                const name = (
-                    item.getAttribute('data-name') || ''
-                ).toLowerCase();
-
-
-                const cat = (
-                    item.getAttribute('data-category') || ''
-                ).toLowerCase();
-
-
-                const matchesSearch =
-                    q === '' || name.includes(q);
-
-
-                const matchesCategory =
-                    activeFilter === 'all' ||
-                    activeFilter === cat;
-                if (matchesSearch && matchesCategory) {
-                    item.style.display = '';
-
-                } else {
-                    item.style.display = 'none';
-                }
-
-            });
-
-        }
-
-    });
-
-</script>
-
+    </script>
 @endsection
